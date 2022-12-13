@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default async function Home() {
   const session = await unstable_getServerSession(authOptions);
-  console.log("session => ",session)
+  // console.log("session => ",session)
   if (session) {
     return (
       <main className={styles.main}>

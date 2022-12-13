@@ -10,28 +10,36 @@ function Input({
   messages,
 }: {
   setMessages: Function;
-  messages: Message[];
+  messages: Message[] | undefined;
 }) {
-  const {data: session} = useSession()
+  const { data: session }: { data: any } = useSession();
   const [message, setMessage] = useState<string>("");
-  const handleSubmit = () => {
-    
+  const handleSubmit = async () => {
     if (message === "") return;
     // TODO: change id to proper id
-    const messageToAdd:Message = {
+    const messageToAdd: Message = {
+      userId: session?.user?.id!,
       text: message,
-      id: "0",
       user: session?.user?.name!,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     };
     setMessage("");
-
-    setMessages([messageToAdd, ...messages]);
+    setMessages([messageToAdd, ...messages!]);
+    try{
+    const updatedResult = await fetch("/api/user/sendMessage", {
+      method: "POST",
+      body: JSON.stringify({ text: messageToAdd.text }),
+    }).then(res=>res.json());
+  }catch(err){
+    console.log(err);
+  }
   };
   return (
     <footer className={styles.footer}>
       <div className={styles.main}>
         <input
+          spellCheck="false"
+          disabled={messages===undefined}
           className={styles.message}
           type="text"
           placeholder="Type a message..."

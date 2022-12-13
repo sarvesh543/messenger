@@ -8,16 +8,15 @@
     flex-direction: column-reverse;
 }
 .message{
-    display: inline-block;
-    margin: 10px 0;
-    margin-top: 0;
-    padding: 10px;
-    padding-top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 10px;
     border-radius: 10px;
-    background-color: green;
+    background-color: rgb(48, 48, 48);
     color: white;
     max-width: 80%;
     width:fit-content;
+    height: fit-content;
     word-wrap: break-word;
     border-top-left-radius: 0;
     /* border-top-right-radius: 0; */
@@ -34,14 +33,50 @@
     width: 0;
     height: 0;
     border-bottom: 10px solid transparent;
-    border-right: 10px solid green;
+    border-right: 10px solid rgb(48, 48, 48);
     /* border-left: 10px solid green; */
 }
 .name{
-    font-size: medium;
+    font-size: small;
     margin: 0 10px;
     color:blue;
     padding: 0;
+    margin-top: 10px;
     font-weight: 600;
     /* text-align: end; */
+}
+.text{
+    font-size: small;
+    flex-grow: 1;
+    /* margin: 0 10px; */
+    padding: 0;
+    /* text-align: end; */
+}
+.date{
+    font-size: x-small;
+    flex-grow: 1;
+    align-self: flex-end;
+    text-align: right;
+    right:0;
+    margin-left: 3px;
+    margin-top: 0;
+    color: rgb(186, 186, 186);
+}
+
+.userMessage{
+    background-color: green;
+    border-top-right-radius: 0;
+    border-top-left-radius: 10px;
+
+}
+.userWithArrow{
+    flex-direction: row-reverse;
+}
+.userArrow{
+    border-left: 10px solid green;
+    border-right: none;
+
+}
+.userName{
+    text-align: end;
 }
