@@ -1,7 +1,7 @@
 import styles from "../../../styles/SignIn.module.css"
 import { getProviders } from "next-auth/react"
 import SignInButton from "../../../components/SignInButton";
-import {authOptions} from "../../../pages/api/auth/[...nextAuth]"
+import {authOptions} from "../../../pages/api/auth/[...nextauth]"
 
 async function SignIn() {
     const providers = authOptions.providers;
