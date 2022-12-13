@@ -6,7 +6,7 @@ type Props = {
   className: string;
 };
 
-function SignInButton({ provider, className }: Props) {
+function SignInButton({ providerId, className }: Props) {
   return (
     
     <button
