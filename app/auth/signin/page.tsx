@@ -12,7 +12,7 @@ async function SignIn() {
         {Object.values(providers!).map(provider=>{
             return <div key={provider.id} className={styles.provider}>
                 <h3>Sign In with {provider.name} <img className={styles.logo} src="/google.png" alt="google logo" /></h3>
-                <SignInButton className={styles.authbtn} provider={provider}/>
+                <SignInButton className={styles.authbtn} providerId={provider.id}/>
             </div>
         })}
     </main>
