@@ -1,8 +1,8 @@
 "use client";
-import { ClientSafeProvider, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 type Props = {
-  provider: ClientSafeProvider;
+  providerId: string;
   className: string;
 };
 
@@ -12,7 +12,7 @@ function SignInButton({ provider, className }: Props) {
     <button
       className={className}
       onClick={() =>
-        signIn(provider.id, {
+        signIn(providerId, {
           callbackUrl: window.location.origin,
         })
       }
