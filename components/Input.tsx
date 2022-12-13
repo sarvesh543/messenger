@@ -8,9 +8,11 @@ import { Message } from "../typings";
 function Input({
   setMessages,
   messages,
+  socket
 }: {
   setMessages: Function;
   messages: Message[] | undefined;
+  socket:any;
 }) {
   const { data: session }: { data: any } = useSession();
   const [message, setMessage] = useState<string>("");
@@ -18,21 +20,22 @@ function Input({
     if (message === "") return;
     // TODO: change id to proper id
     const messageToAdd: Message = {
-      userId: session?.user?.id!,
+      isUser:true,
       text: message,
       user: session?.user?.name!,
       createdAt: new Date().toISOString(),
     };
     setMessage("");
     setMessages([messageToAdd, ...messages!]);
-    try{
-    const updatedResult = await fetch("/api/user/sendMessage", {
-      method: "POST",
-      body: JSON.stringify({ text: messageToAdd.text }),
-    }).then(res=>res.json());
-  }catch(err){
-    console.log(err);
-  }
+    socket.emit("user-message", messageToAdd.text)
+  //   try{
+  //   const updatedResult = await fetch("/api/user/sendMessage", {
+  //     method: "POST",
+  //     body: JSON.stringify({ text: messageToAdd.text }),
+  //   }).then(res=>res.json());
+  // }catch(err){
+  //   console.log(err);
+  // }
   };
   return (
     <footer className={styles.footer}>
