@@ -1,9 +1,10 @@
 import styles from "../../../styles/SignIn.module.css"
 import { getProviders } from "next-auth/react"
 import SignInButton from "../../../components/SignInButton";
+import {authOptions} from "../../../pages/api/auth/[...nextauth]"
 
 async function SignIn() {
-    const providers = await getProviders();
+    const providers = authOptions.providers;
     // TODO: redirect to home page if already logged in
     // do this when advanced routing is implemented
   return (
@@ -11,7 +12,7 @@ async function SignIn() {
         {Object.values(providers!).map(provider=>{
             return <div key={provider.id} className={styles.provider}>
                 <h3>Sign In with {provider.name} <img className={styles.logo} src="/google.png" alt="google logo" /></h3>
-                <SignInButton className={styles.authbtn} provider={provider}/>
+                <SignInButton className={styles.authbtn} providerId={provider.id}/>
             </div>
         })}
     </main>
