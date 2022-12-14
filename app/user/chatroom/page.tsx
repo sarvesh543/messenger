@@ -33,17 +33,14 @@ function ChatRoomPage() {
     };
   };
   const socketInitializer = async () => {
-    try{
     await fetch("/api/chatsocket");
-    }catch(err){
-      // socket connection failed
-      console.log("socket connection failed");
-      alert("socket connection failed. please try again later")
-    }
     socket = io();
     socket.on("connect", () => {
       console.log("connected");
     });
+    socket.on("disconnect", () => {
+      console.log("disconnected");
+    })
     socket.on("update-input", (data: any) => {
       console.log(data);
       fetchMessages();
@@ -63,8 +60,10 @@ function ChatRoomPage() {
     socketInitializer();
 
     return () => {
+      socket.disconnect();
       socket.off("connect");
       socket.off("update-input");  
+      socket.off("disconnect");
     };
   }, []);
 
