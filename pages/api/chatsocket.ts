@@ -31,6 +31,7 @@ export default async function handler(req: any, res: any) {
         .collection("sessions")
         .findOne({ sessionToken });
       if (session === null || session.expires < new Date()) {
+        console.log("sessionToken => ", sessionToken);
         console.log("session => ", session);
         socket.disconnect(true);
         return;
