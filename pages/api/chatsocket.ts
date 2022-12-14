@@ -25,7 +25,6 @@ export default async function handler(req: any, res: any) {
       const sessionToken = cookies["next-auth.session-token"];
       const session = await mongo.db().collection("sessions").findOne({sessionToken});
       if(session === null || session.expires < new Date()){
-        console.log("here i am")
         socket.disconnect(true);
         return;
       }

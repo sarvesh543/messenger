@@ -10,7 +10,7 @@ async function AuthButton() {
   if (session) {
     return (
       <>
-        <SignOutButton className={styles.authbtn} />;
+        <SignOutButton className={styles.authbtn} />
       </>
     );
   } else {

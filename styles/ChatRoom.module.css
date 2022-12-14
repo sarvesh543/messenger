@@ -1,7 +1,12 @@
+
 .container{
-    height: calc(100vh - 60px - 60px - 20px);
+    height: calc(100% - 60px - 60px - 50px);
     /* 60px for header, 60px for footer, 20px for top-bottom padding */
-    padding: 10px;
+    /* height: 100%; */
+    width: calc(100% - 20px);
+    position:fixed;
+    padding: 25px 10px;
+    /* padding-bottom: 25px; */
     overflow: auto;
     display: flex;
     background-color: rgb(226, 255, 226);
