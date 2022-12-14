@@ -22,7 +22,10 @@ export default async function handler(req: any, res: any) {
       // setting user properties
       // getting user
       const cookies = cookie.parse(socket.request.headers.cookie || "");
-      const sessionToken = cookies["next-auth.session-token"];
+      let sessionToken = cookies["next-auth.session-token"];
+      if(!sessionToken) {
+        sessionToken = cookies["_Secure-next-auth.session-token"];
+      }
       const session = await mongo
         .db()
         .collection("sessions")
