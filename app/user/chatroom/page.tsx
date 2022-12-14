@@ -6,13 +6,14 @@ import Input from "../../../components/Input";
 import { Message } from "../../../typings";
 import io, { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import Loading from "./loading";
+import { useRouter } from "next/router";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap> = io();
 
 function ChatRoomPage() {
+  const router = useRouter();
   // state variable to store messages
-  const [messages, setMessages] = useState<Message[] | undefined>([]);
+  const [messages, setMessages] = useState<Message[] | undefined>(undefined);
   // TODO: add a useEffect to fetch messages from the database
   // TODO: add location range indicator besides username
   // TODO: add more css formating to the messages
@@ -28,6 +29,7 @@ function ChatRoomPage() {
       console.log("messages fetched");
     }catch(err){
       console.log("error fetching messages");
+      router.push("/auth/signin");
     };
   };
   const socketInitializer = async () => {
@@ -36,6 +38,7 @@ function ChatRoomPage() {
     }catch(err){
       // socket connection failed
       console.log("socket connection failed");
+      alert("socket connection failed. please try again later")
     }
     socket = io();
     socket.on("connect", () => {
