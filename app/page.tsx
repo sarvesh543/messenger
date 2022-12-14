@@ -31,7 +31,8 @@ export default async function Home() {
   } else {
     return (
       <main className={styles.main}>
-        <h1>Welcome to App Title</h1>
+        <h1>Welcome to MessLoc</h1>
+        <p>Details will be updated here...</p>
       </main>
     );
   }
