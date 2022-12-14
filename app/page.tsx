@@ -25,7 +25,7 @@ export default async function Home() {
           <div className={styles.three}>Email:</div>
           <div className={styles.four}>{session.user?.email}</div>
         </div>
-        <Link href="/user/chatroom" prefetch={false} className={styles.btn}>Go To ChatRoom</Link>
+        <Link href="/user/chatroom" className={styles.btn}>Go To ChatRoom</Link>
       </main>
     );
   } else {

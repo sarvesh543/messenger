@@ -3,6 +3,7 @@ import React from 'react';
 import { Message } from '../typings';
 import styles from '../styles/ChatRoom.module.css'
 import Loading from '../app/user/chatroom/loading';
+import { format } from "timeago.js";
 
 function ChatList({messages}: {messages: Message[] | undefined}) {
 
@@ -17,7 +18,7 @@ function ChatList({messages}: {messages: Message[] | undefined}) {
               <div className={`${styles.message} ${message.isUser && styles.userMessage}`}>
                 <p className={styles.text}>{message.text}</p>
                 <p className={styles.date}>
-                  {new Date(message.createdAt).toLocaleDateString()}
+                  {format(new Date(message.createdAt))}
                 </p>
               </div>
             </div>

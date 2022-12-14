@@ -1,4 +1,5 @@
 "use client";
+import styles from "../../../styles/ChatRoom.module.css";
 import { SessionProvider } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import ChatList from "../../../components/ChatList";
@@ -14,23 +15,24 @@ function ChatRoomPage() {
   const router = useRouter();
   // state variable to store messages
   const [messages, setMessages] = useState<Message[] | undefined>(undefined);
+  const [onlineUsers, setOnlineUsers] = useState(1);
   // TODO: add a useEffect to fetch messages from the database
   // TODO: add location range indicator besides username
   // TODO: add more css formating to the messages
   // socket connection
 
   const fetchMessages = async () => {
-    try{
+    try {
       const result = await fetch("/api/user/getMessages").then((res) =>
         res.json()
       );
-      if(!Array.isArray(result)) throw new Error("messages not fetched");
+      if (!Array.isArray(result)) throw new Error("messages not fetched");
       setMessages(result);
       console.log("messages fetched");
-    }catch(err){
+    } catch (err) {
       console.log("error fetching messages");
       router.push("/auth/signin");
-    };
+    }
   };
   const socketInitializer = async () => {
     await fetch("/api/chatsocket");
@@ -40,13 +42,20 @@ function ChatRoomPage() {
     });
     socket.on("disconnect", () => {
       console.log("disconnected");
-    })
+    });
+
+    // online users updated
+    socket.on("online-users", (data: any) => {
+      console.log(data);
+      setOnlineUsers(data);
+    });
+    // new message recieved event
     socket.on("update-input", (data: any) => {
       console.log(data);
       fetchMessages();
     });
   };
-  
+
   useEffect(() => {
     // const fetchMessages = async () => {
     //   const result = await fetch("/api/user/getMessages").then((res) =>
@@ -62,7 +71,7 @@ function ChatRoomPage() {
     return () => {
       socket.disconnect();
       socket.off("connect");
-      socket.off("update-input");  
+      socket.off("update-input");
       socket.off("disconnect");
     };
   }, []);
@@ -72,6 +81,11 @@ function ChatRoomPage() {
   return (
     <>
       <SessionProvider>
+        {messages !== undefined && (
+          <div className={styles.online}>
+            <h1>Online Users: {onlineUsers}</h1>
+          </div>
+        )}
         <ChatList messages={messages} />
         <Input setMessages={setMessages} messages={messages} socket={socket} />
       </SessionProvider>

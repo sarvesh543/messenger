@@ -1,87 +1,100 @@
+.container {
+  height: calc(100% - 60px - 60px - 50px);
+  /* 60px for header, 60px for footer, 20px for top-bottom padding */
+  /* height: 100%; */
+  width: calc(100% - 20px);
+  position: fixed;
+  padding: 25px 10px;
+  /* padding-bottom: 25px; */
+  overflow: auto;
+  display: flex;
+  background-color: rgb(226, 255, 226);
+  flex-direction: column-reverse;
+}
+.online {
+  position: fixed;
+  z-index: 50;
+  width:100%;
+  display: flex;
+  margin-top: -20px;
+  justify-content: center;
+}
+.online h1 {
+  background-color: blue;
+  color: white;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: x-small;
+  
+}
+.message {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 10px;
+  border-radius: 10px;
+  background-color: rgb(48, 48, 48);
+  color: white;
+  max-width: 80%;
+  width: fit-content;
+  height: fit-content;
+  word-wrap: break-word;
+  border-top-left-radius: 0;
+  /* border-top-right-radius: 0; */
+}
+.withArrow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  /* flex-direction: row-reverse; */
+}
+.arrow {
+  display: inline-block;
+  align-self: flex-start;
+  width: 0;
+  height: 0;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid rgb(48, 48, 48);
+  /* border-left: 10px solid green; */
+}
+.name {
+  font-size: small;
+  margin: 0 10px;
+  color: blue;
+  padding: 0;
+  margin-top: 10px;
+  font-weight: 600;
+  /* text-align: end; */
+}
+.text {
+  font-size: small;
+  flex-grow: 1;
+  /* margin: 0 10px; */
+  padding: 0;
+  /* text-align: end; */
+}
+.date {
+  font-size: x-small;
+  flex-grow: 1;
+  align-self: flex-end;
+  text-align: right;
+  right: 0;
+  margin-left: 3px;
+  margin-top: 0;
+  color: rgb(186, 186, 186);
+}
 
-.container{
-    height: calc(100% - 60px - 60px - 50px);
-    /* 60px for header, 60px for footer, 20px for top-bottom padding */
-    /* height: 100%; */
-    width: calc(100% - 20px);
-    position:fixed;
-    padding: 25px 10px;
-    /* padding-bottom: 25px; */
-    overflow: auto;
-    display: flex;
-    background-color: rgb(226, 255, 226);
-    flex-direction: column-reverse;
+.userMessage {
+  background-color: green;
+  border-top-right-radius: 0;
+  border-top-left-radius: 10px;
 }
-.message{
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0 10px;
-    border-radius: 10px;
-    background-color: rgb(48, 48, 48);
-    color: white;
-    max-width: 80%;
-    width:fit-content;
-    height: fit-content;
-    word-wrap: break-word;
-    border-top-left-radius: 0;
-    /* border-top-right-radius: 0; */
+.userWithArrow {
+  flex-direction: row-reverse;
 }
-.withArrow{
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    /* flex-direction: row-reverse; */
+.userArrow {
+  border-left: 10px solid green;
+  border-right: none;
 }
-.arrow{
-    display: inline-block;
-    align-self: flex-start;
-    width: 0;
-    height: 0;
-    border-bottom: 10px solid transparent;
-    border-right: 10px solid rgb(48, 48, 48);
-    /* border-left: 10px solid green; */
-}
-.name{
-    font-size: small;
-    margin: 0 10px;
-    color:blue;
-    padding: 0;
-    margin-top: 10px;
-    font-weight: 600;
-    /* text-align: end; */
-}
-.text{
-    font-size: small;
-    flex-grow: 1;
-    /* margin: 0 10px; */
-    padding: 0;
-    /* text-align: end; */
-}
-.date{
-    font-size: x-small;
-    flex-grow: 1;
-    align-self: flex-end;
-    text-align: right;
-    right:0;
-    margin-left: 3px;
-    margin-top: 0;
-    color: rgb(186, 186, 186);
-}
-
-.userMessage{
-    background-color: green;
-    border-top-right-radius: 0;
-    border-top-left-radius: 10px;
-
-}
-.userWithArrow{
-    flex-direction: row-reverse;
-}
-.userArrow{
-    border-left: 10px solid green;
-    border-right: none;
-
-}
-.userName{
-    text-align: end;
+.userName {
+  text-align: end;
 }
