@@ -6,7 +6,7 @@ import Input from "../../../components/Input";
 import { Message } from "../../../typings";
 import io, { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap> = io();
 
