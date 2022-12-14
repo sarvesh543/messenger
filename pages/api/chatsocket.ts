@@ -49,20 +49,16 @@ export default async function handler(req: any, res: any) {
       console.log(socket.data.user.email);
       socket.on("user-message", async (msg: any) => {
         console.log("=============");
-        console.log("keys\n", io.sockets.sockets.keys(), "\nkeys end \n");
+        // console.log("keys\n", io.sockets.sockets.keys(), "\nkeys end \n");
         if (!socket.data.user) return;
         // update message for all active users
         const uniqueUser: any = {};
+        let count = 0;
         io.sockets.sockets.forEach((otherSocket) => {
           if (!otherSocket.data.user) return;
           // processed this user
           // add location checking here
           if (!uniqueUser[otherSocket.data.user.id]) {
-            console.log("message start");
-            console.log(msg);
-            console.log("other user => ", otherSocket.data.user.email);
-            console.log("message user => ", socket.data.user.email);
-            console.log("message end");
 
             const createdAt = new Date();
             // console.log(otherSocket.session.user.email);
@@ -82,19 +78,15 @@ export default async function handler(req: any, res: any) {
                   },
                 }
               );
-            console.log(
-              "sockets id\n",
-              socket.id,
-              "\n",
-              otherSocket.id,
-              "\nsockets id end"
-            );
-            console.log("=============");
-            uniqueUser[otherSocket.data.user.id] = true;
-          }
-          io.to(otherSocket.id).emit("update-input", "message received");
-        });
-        // console.log(io.sockets.sockets.length);
+              
+              uniqueUser[otherSocket.data.user.id] = true;
+              count+=1;
+            }
+            io.to(otherSocket.id).emit("update-input", "message received");
+          });
+        
+        console.log("Number of active users => ", count);
+        console.log("=============");
         // socket.broadcast.emit("update-input", msg);
       });
     });

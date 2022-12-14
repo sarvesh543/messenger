@@ -16,7 +16,7 @@ function Header() {
             height={100}
           />
         </Link>
-        <h1 className={styles.title}>App Title</h1>
+        <h1 className={styles.title}>MessLoc</h1>
       </div>
       <AuthButton />
     </header>
