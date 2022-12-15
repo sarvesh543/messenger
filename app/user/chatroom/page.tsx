@@ -38,6 +38,7 @@ function ChatRoomPage() {
     await fetch("/api/chatsocket");
     socket = io();
     socket.on("connect", () => {
+      updateGeoLocation();
       console.log("connected");
     });
     socket.on("disconnect", () => {
@@ -46,29 +47,50 @@ function ChatRoomPage() {
 
     // online users updated
     socket.on("online-users", (data: any) => {
-      console.log(data);
+      // console.log(data);
       setOnlineUsers(data);
     });
     // new message recieved event
     socket.on("update-input", (data: any) => {
-      console.log(data);
+      // console.log(data);
       fetchMessages();
     });
   };
 
+  const updateGeoLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // console.log("position => ", position);
+        const coords = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+
+        socket.emit("location-update", coords);
+      },
+      (error) => {
+        // throw error to redirect to error page
+        console.log(error);
+      }
+    );
+  };
+
   useEffect(() => {
-    // const fetchMessages = async () => {
-    //   const result = await fetch("/api/user/getMessages").then((res) =>
-    //     res.json()
-    //   );
-    //   // console.log(result);
-    //   setMessages(result);
-    // };
-    // fetchMessages();
+    // geolocation
+    if (!navigator.geolocation) {
+      alert("location access not available");
+      
+      // TODO: display error message when location not found or incorrect location and disconnect socket connection
+    }
+    const intervalId = setInterval(
+      updateGeoLocation,
+      10000);
+
     fetchMessages();
     socketInitializer();
 
     return () => {
+      clearInterval(intervalId);
       socket.disconnect();
       socket.off("connect");
       socket.off("update-input");
