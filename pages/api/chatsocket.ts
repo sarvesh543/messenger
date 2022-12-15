@@ -4,7 +4,12 @@ import { Server } from "socket.io";
 import clientPromise from "../../lib/mongodb";
 import cookie from "cookie";
 import { authOptions } from "./auth/[...nextauth]";
-import {getDistanceFromLatLonInKm, getSessionFromSessionToken, getUserFromSession, thresholdDistance} from "../../lib/chatSocketFunctions";
+import {
+  getDistanceFromLatLonInKm,
+  getSessionFromSessionToken,
+  getUserFromSession,
+  thresholdDistance,
+} from "../../lib/chatSocketFunctions";
 
 // TODO: refactor this mess
 export default async function handler(req: any, res: any) {
@@ -40,9 +45,12 @@ export default async function handler(req: any, res: any) {
         return;
       }
       const user = await getUserFromSession(session, mongo);
-      // connected with authenticated user      
+      // connected with authenticated user
       // add this to active clients
-      global.neighbours[socket.id] = {neighbours:{[socket.id]:socket},socket: socket};
+      global.neighbours[socket.id] = {
+        neighbours: { [socket.id]: socket },
+        socket: socket,
+      };
       // setting user properties on socket of that user
       socket.data.user = {
         name: user?.name,
@@ -64,25 +72,15 @@ export default async function handler(req: any, res: any) {
 
         // if everything works then change this to global neighbours
         // console.log(Object.keys(global.neighbours[socket.id].neighbours));
-        Object.keys(global.neighbours[socket.id].neighbours).forEach((otherSocketId) => {
-          const otherSocket = global.neighbours[socket.id].neighbours[otherSocketId];
-          if (!otherSocket.data.user || !otherSocket.data.user.location) return;
-          if (!socket.data.user.location) return;
-          // console.log(otherSocket.data.user.name," => ", otherSocket.data.user.location);
-          // mark user as processed
-          
-          // add location checking here
-          if (!uniqueUser[otherSocket.data.user.id]) {
-            uniqueUser[otherSocket.data.user.id] = true;
-            const dist = getDistanceFromLatLonInKm(
-              socket.data.user.location.latitude,
-              socket.data.user.location.longitude,
-              otherSocket.data.user.location.latitude,
-              otherSocket.data.user.location.longitude
-            );
-            console.log("dist => ", dist)
-            if (dist > thresholdDistance) return;
+        Object.keys(global.neighbours[socket.id].neighbours).forEach(
+          (otherSocketId) => {
+            const otherSocket =
+              global.neighbours[socket.id].neighbours[otherSocketId];
+            if (!otherSocket.data.user || !otherSocket.data.user.location)
+              return;
+            if (!socket.data.user.location) return;
 
+            // mark user as processed
             // all good, send message
             const createdAt = new Date();
             const message = {
@@ -108,11 +106,11 @@ export default async function handler(req: any, res: any) {
               );
 
             count += 1;
-          }
 
-          // send message to client that messages have been updated
-          io.to(otherSocket.id).emit("update-input", "message received");
-        });
+            // send message to client that messages have been updated
+            io.to(otherSocket.id).emit("update-input", "message received");
+          }
+        );
 
         console.log("Number of active users => ", count);
         console.log("=============");
@@ -126,8 +124,13 @@ export default async function handler(req: any, res: any) {
           const tempSocket = global.neighbours[socketId].socket;
           if (!tempSocket.data.user.location) return;
 
-          const dist = getDistanceFromLatLonInKm(socket.data.user.location.latitude, socket.data.user.location.longitude, tempSocket.data.user.location.latitude, tempSocket.data.user.location.longitude);
-          if(dist > thresholdDistance){
+          const dist = getDistanceFromLatLonInKm(
+            socket.data.user.location.latitude,
+            socket.data.user.location.longitude,
+            tempSocket.data.user.location.latitude,
+            tempSocket.data.user.location.longitude
+          );
+          if (dist > thresholdDistance) {
             delete global.neighbours[socket.id].neighbours[tempSocket.id];
             delete global.neighbours[tempSocket.id].neighbours[socket.id];
             return;
@@ -135,9 +138,15 @@ export default async function handler(req: any, res: any) {
           // all good, add to neighbours
           global.neighbours[socket.id].neighbours[tempSocket.id] = tempSocket;
           global.neighbours[tempSocket.id].neighbours[socket.id] = socket;
-          io.to(tempSocket.id).emit("online-users", Object.keys(global.neighbours[tempSocket.id].neighbours).length);
+          io.to(tempSocket.id).emit(
+            "online-users",
+            Object.keys(global.neighbours[tempSocket.id].neighbours).length
+          );
         });
-        io.to(socket.id).emit("online-users", Object.keys(global.neighbours[socket.id].neighbours).length);
+        io.to(socket.id).emit(
+          "online-users",
+          Object.keys(global.neighbours[socket.id].neighbours).length
+        );
         // console.log("global => ", Object.keys(global.neighbours).length);
       });
 
@@ -149,7 +158,10 @@ export default async function handler(req: any, res: any) {
         delete global.neighbours[deletedId];
         Object.keys(global.neighbours).forEach((socketId) => {
           delete global.neighbours[socketId].neighbours[deletedId];
-          io.to(socketId).emit("online-users", Object.keys(global.neighbours[socketId].neighbours).length);
+          io.to(socketId).emit(
+            "online-users",
+            Object.keys(global.neighbours[socketId].neighbours).length
+          );
         });
       });
     });
