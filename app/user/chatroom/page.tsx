@@ -92,6 +92,7 @@ function ChatRoomPage() {
     return () => {
       clearInterval(intervalId);
       socket.disconnect();
+      socket.off("location-update");
       socket.off("connect");
       socket.off("update-input");
       socket.off("disconnect");

@@ -130,6 +130,8 @@ export default async function handler(req: any, res: any) {
         //add this user to active clients which are within d distance from here
         Object.keys(global.neighbours).forEach((socketId) => {
           const tempSocket = global.neighbours[socketId].socket;
+          console.log("tempSocket => ", tempSocket.data.user);
+          
           if (!tempSocket.data.user.location) return;
 
           const dist = getDistanceFromLatLonInKm(
