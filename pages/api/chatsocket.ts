@@ -55,8 +55,9 @@ export default async function handler(req: any, res: any) {
         name: user?.name,
         email: user?.email,
         id: user?._id.toString(),
+        timeout: new Date(),
       };
-
+  
       // console.log(socket.data.user.email);
 
       // listening for client events "user-message"
@@ -125,14 +126,23 @@ export default async function handler(req: any, res: any) {
         }
         console.log("///////////////////////////");
         console.log("Location update from => ", socket.data.user.name);
+        socket.data.user.timeout = new Date();
         socket.data.user.location = location;
         //add this user to active clients which are within d distance from here
         Object.keys(global.neighbours).forEach((socketId) => {
           const tempSocket = global.neighbours[socketId].socket;
           console.log("tempSocket => ", tempSocket.data.user);
 
-          if (!tempSocket.data.user.location) return;
+          if (!tempSocket.data.user.location){
+            if(tempSocket.data.user.timeout + 60*1000 < new Date()){
+              // no location recieved in last 60 seconds
+              delete global.neighbours[tempSocket.id];
+              delete global.neighbours[socket.id].neighbours[tempSocket.id];
 
+              tempSocket.disconnect(true);
+            }
+            return;
+          }
           const dist = getDistanceFromLatLonInKm(
             socket.data.user.location.latitude,
             socket.data.user.location.longitude,
