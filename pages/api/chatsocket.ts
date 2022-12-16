@@ -120,10 +120,12 @@ export default async function handler(req: any, res: any) {
       });
       // location update
       socket.on("location-update", async (location: any) => {
-        if (!location.latitude || !location.longitude){
+        if (!location.latitude || !location.longitude) {
           console.log("Invalid location from => ", socket.data.user.name);
           return;
         }
+        console.log("///////////////////////////");
+        console.log("Location update from => ", socket.data.user.name);
         socket.data.user.location = location;
         //add this user to active clients which are within d distance from here
         Object.keys(global.neighbours).forEach((socketId) => {
@@ -148,7 +150,15 @@ export default async function handler(req: any, res: any) {
             "online-users",
             Object.keys(global.neighbours[tempSocket.id].neighbours).length
           );
+          console.log("_________________________");
+          console.log("email => ", tempSocket.data.user.email);
+          console.log(
+            "connections => ",
+            Object.keys(global.neighbours[tempSocket.id].neighbours).length
+          );
+          console.log("_________________________");
         });
+        console.log("///////////////////////////");
         io.to(socket.id).emit(
           "online-users",
           Object.keys(global.neighbours[socket.id].neighbours).length

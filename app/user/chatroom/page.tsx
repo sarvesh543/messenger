@@ -84,7 +84,7 @@ function ChatRoomPage() {
     }
     const intervalId = setInterval(
       updateGeoLocation,
-      30000);
+      10000);
 
     fetchMessages();
     socketInitializer();
