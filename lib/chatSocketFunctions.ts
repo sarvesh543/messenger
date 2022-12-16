@@ -29,6 +29,5 @@ function deg2rad(deg:number) {
   return deg * (Math.PI / 180);
 }
 
-const thresholdDistance = 1;
 
-export { thresholdDistance, getDistanceFromLatLonInKm, getSessionFromSessionToken, getUserFromSession }
+export { getDistanceFromLatLonInKm, getSessionFromSessionToken, getUserFromSession }

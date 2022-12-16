@@ -8,7 +8,6 @@ import {
   getDistanceFromLatLonInKm,
   getSessionFromSessionToken,
   getUserFromSession,
-  thresholdDistance,
 } from "../../lib/chatSocketFunctions";
 
 // TODO: refactor this mess
@@ -131,7 +130,7 @@ export default async function handler(req: any, res: any) {
         Object.keys(global.neighbours).forEach((socketId) => {
           const tempSocket = global.neighbours[socketId].socket;
           console.log("tempSocket => ", tempSocket.data.user);
-          
+
           if (!tempSocket.data.user.location) return;
 
           const dist = getDistanceFromLatLonInKm(
@@ -140,7 +139,8 @@ export default async function handler(req: any, res: any) {
             tempSocket.data.user.location.latitude,
             tempSocket.data.user.location.longitude
           );
-          if (dist > thresholdDistance) {
+          console.log(dist," above one");
+          if (dist > parseInt(process.env.THRESHOLD_DISTANCE!)) {
             delete global.neighbours[socket.id].neighbours[tempSocket.id];
             delete global.neighbours[tempSocket.id].neighbours[socket.id];
             return;
