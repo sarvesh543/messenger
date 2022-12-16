@@ -120,7 +120,10 @@ export default async function handler(req: any, res: any) {
       });
       // location update
       socket.on("location-update", async (location: any) => {
-        if (!location.latitude || !location.longitude) return;
+        if (!location.latitude || !location.longitude){
+          console.log("Invalid location from => ", socket.data.user.name);
+          return;
+        }
         socket.data.user.location = location;
         //add this user to active clients which are within d distance from here
         Object.keys(global.neighbours).forEach((socketId) => {
