@@ -43,7 +43,7 @@ function ChatRoomPage() {
     });
     socket.on("disconnect", () => {
       console.log("disconnected");
-      throw new Error("Please make sure you have enabled location access");
+      // throw new Error("Please make sure you have enabled location access");
     });
 
     // online users updated

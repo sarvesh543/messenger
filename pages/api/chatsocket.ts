@@ -55,7 +55,7 @@ export default async function handler(req: any, res: any) {
         name: user?.name,
         email: user?.email,
         id: user?._id.toString(),
-        timeout: new Date(),
+        timeout: new Date().valueOf(),
       };
   
       // console.log(socket.data.user.email);
@@ -126,7 +126,7 @@ export default async function handler(req: any, res: any) {
         }
         console.log("///////////////////////////");
         console.log("Location update from => ", socket.data.user.name);
-        socket.data.user.timeout = new Date();
+        socket.data.user.timeout = new Date().valueOf();
         socket.data.user.location = location;
         //add this user to active clients which are within d distance from here
         Object.keys(global.neighbours).forEach((socketId) => {
@@ -134,7 +134,7 @@ export default async function handler(req: any, res: any) {
           console.log("tempSocket => ", tempSocket.data.user);
 
           if (!tempSocket.data.user.location){
-            if(tempSocket.data.user.timeout + 60*1000 < new Date()){
+            if(tempSocket.data.user.timeout + 60*1000 < new Date().valueOf()){
               // no location recieved in last 60 seconds
               delete global.neighbours[tempSocket.id];
               delete global.neighbours[socket.id].neighbours[tempSocket.id];
