@@ -65,7 +65,7 @@ function ChatRoomPage() {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         };
-
+        console.log("location updated")
         socket.emit("location-update", coords);
       },
       (error) => {
@@ -84,7 +84,7 @@ function ChatRoomPage() {
     }
     const intervalId = setInterval(
       updateGeoLocation,
-      10000);
+      5000);
 
     fetchMessages();
     socketInitializer();
