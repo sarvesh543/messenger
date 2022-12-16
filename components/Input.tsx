@@ -19,15 +19,10 @@ function Input({
   const handleSubmit = async () => {
     if (message === "") return;
     // TODO: change id to proper id
-    const messageToAdd: Message = {
-      isUser:true,
-      text: message,
-      user: session?.user?.name!,
-      createdAt: new Date().toISOString(),
-    };
+    const messageToAdd = message
     setMessage("");
     setMessages([messageToAdd, ...messages!]);
-    socket.emit("user-message", messageToAdd.text)
+    socket.emit("user-message", messageToAdd)
   //   try{
   //   const updatedResult = await fetch("/api/user/sendMessage", {
   //     method: "POST",

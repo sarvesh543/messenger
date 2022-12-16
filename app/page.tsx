@@ -8,9 +8,11 @@ import Link from "next/link";
 export default async function Home() {
   const session = await unstable_getServerSession(authOptions);
   // console.log("session => ",session)
+  // TODO: implement functionality to edit profile and details like about
   if (session) {
     return (
       <main className={styles.main}>
+        <h1>Change style of this page later</h1>
         <Image
           className={styles.profile}
           src={session.user?.image!}

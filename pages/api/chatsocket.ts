@@ -80,33 +80,36 @@ export default async function handler(req: any, res: any) {
               return;
             if (!socket.data.user.location) return;
 
-            // mark user as processed
-            // all good, send message
-            const createdAt = new Date();
-            const message = {
-              text: msg,
-              createdAt,
-              isUser: socket.data.user.id === otherSocket.data.user.id,
-              user: socket.data.user.name,
-            };
-            // update message asyncronously
-            mongo
-              .db()
-              .collection("users")
-              .updateOne(
-                { _id: new ObjectId(otherSocket.data.user.id) },
-                {
-                  $push: {
-                    messages: {
-                      $each: [message],
-                      $slice: -50,
+            if (!uniqueUser[otherSocket.data.user.id]) {
+              // mark user as processed
+              uniqueUser[otherSocket.data.user.id] = true;
+              // all good, send message
+              const createdAt = new Date();
+              const message = {
+                text: msg,
+                createdAt,
+                isUser: socket.data.user.id === otherSocket.data.user.id,
+                user: socket.data.user.name,
+                senderId: socket.data.user.id,
+              };
+              // update message asyncronously
+              mongo
+                .db()
+                .collection("users")
+                .updateOne(
+                  { _id: new ObjectId(otherSocket.data.user.id) },
+                  {
+                    $push: {
+                      messages: {
+                        $each: [message],
+                        $slice: -50,
+                      },
                     },
-                  },
-                }
-              );
+                  }
+                );
 
-            count += 1;
-
+              count += 1;
+            }
             // send message to client that messages have been updated
             io.to(otherSocket.id).emit("update-input", "message received");
           }

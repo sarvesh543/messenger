@@ -4,6 +4,7 @@ import { Message } from '../typings';
 import styles from '../styles/ChatRoom.module.css'
 import Loading from '../app/user/chatroom/loading';
 import { format } from "timeago.js";
+import Link from 'next/link';
 
 function ChatList({messages}: {messages: Message[] | undefined}) {
 
@@ -22,7 +23,7 @@ function ChatList({messages}: {messages: Message[] | undefined}) {
                 </p>
               </div>
             </div>
-            <p className={`${styles.name} ${message.isUser && styles.userName}`}>{message.user}</p>
+            <Link href={`/user/${message.senderId}`} className={`${styles.name} ${message.isUser && styles.userName}`}>{message.user}</Link>
           </React.Fragment>
         );
       })}

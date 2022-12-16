@@ -58,12 +58,17 @@
 }
 .name {
   font-size: small;
+  text-decoration: none;
   margin: 0 10px;
   color: blue;
   padding: 0;
   margin-top: 10px;
   font-weight: 600;
+  transition: all 0.25s;
   /* text-align: end; */
+}
+.name:hover{
+  font-size: medium;
 }
 .text {
   font-size: small;

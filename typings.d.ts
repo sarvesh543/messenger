@@ -3,6 +3,7 @@ export type Message = {
   createdAt: string;
   user: string;
   isUser: boolean;
+  senderId: string;
 };
 
 export type UserProfile = {
