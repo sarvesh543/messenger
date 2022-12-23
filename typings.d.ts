@@ -2,7 +2,6 @@ export type Message = {
   text: string;
   createdAt: string;
   user: string;
-  isUser: boolean;
   senderId: string;
 };
 

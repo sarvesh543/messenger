@@ -65,6 +65,7 @@
   margin-top: 10px;
   font-weight: 600;
   transition: all 0.25s;
+  align-self: flex-start;
   /* text-align: end; */
 }
 .name:hover{
@@ -101,5 +102,5 @@
   border-right: none;
 }
 .userName {
-  text-align: end;
+  align-self: flex-end;
 }

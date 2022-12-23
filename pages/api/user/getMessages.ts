@@ -19,11 +19,11 @@ export default async function handler(
       return res.status(401).json({ error: "Unauthorized" });
     }
     const mongo = await clientPromise;
-    const user = await mongo
+    const messages = await mongo
       .db()
-      .collection("users")
-      .findOne({ _id: new ObjectId(session.user.id) });
-    return res.status(200).json(user?.messages.reverse());
+      .collection("globalChat")
+      .find({}).toArray();
+    return res.status(200).json(messages.reverse());
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Internal Server Error" });

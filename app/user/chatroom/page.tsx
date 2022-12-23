@@ -1,26 +1,42 @@
 "use client";
 import styles from "../../../styles/ChatRoom.module.css";
-import { SessionProvider } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import { SessionProvider, signOut, useSession } from "next-auth/react";
+import React, { useEffect, useRef, useState } from "react";
 import ChatList from "../../../components/ChatList";
 import Input from "../../../components/Input";
 import { Message } from "../../../typings";
 import io, { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
-import { useRouter } from "next/navigation";
-
-let socket: Socket<DefaultEventsMap, DefaultEventsMap> = io();
 
 function ChatRoomPage() {
-  const router = useRouter();
-  // state variable to store messages
+  const [socket, setSocket] = useState<Socket<
+    DefaultEventsMap,
+    DefaultEventsMap
+  > | null>(null);
+  // state variable to store messages, online Users
   const [messages, setMessages] = useState<Message[] | undefined>(undefined);
   const [onlineUsers, setOnlineUsers] = useState(1);
+  const [status, setStatus] = useState<string | undefined>("Connecting...");
+  const {
+    data: session,
+    status: sessionStatus,
+  }: { data: any; status: string } = useSession();
+  
+  // using refs to use state variables in callback functions
+  const messageRef = useRef<Message[] | undefined>();
+  messageRef.current = messages;
+  const sessionRef = useRef<any>();
+  sessionRef.current = session;
+
   // TODO: add a useEffect to fetch messages from the database
   // TODO: add location range indicator besides username
   // TODO: add more css formating to the messages
   // socket connection
 
+  const addMsg = (msg: Message) => {
+    if(sessionRef.current.user.id === msg.senderId) return;
+    setMessages([msg, ...messageRef.current!]);
+  };
   const fetchMessages = async () => {
     try {
       const result = await fetch("/api/user/getMessages").then((res) =>
@@ -31,72 +47,55 @@ function ChatRoomPage() {
       console.log("messages fetched");
     } catch (err) {
       console.log("error fetching messages");
-      router.push("/auth/signin");
+      signOut({ callbackUrl: `${window.location.origin}/auth/signin` });
     }
   };
   const socketInitializer = async () => {
+    if (socket) return;
     await fetch("/api/chatsocket");
-    socket = io();
-    socket.on("connect", () => {
-      updateGeoLocation();
+    const newSocket = io();
+    newSocket.on("connect", () => {
+      setStatus(undefined);
       console.log("connected");
     });
-    socket.on("disconnect", () => {
+    newSocket.on("disconnect", () => {
+      setStatus("Disconnected... Please refresh the page");
       console.log("disconnected");
       // throw new Error("Please make sure you have enabled location access");
     });
 
     // online users updated
-    socket.on("online-users", (data: any) => {
+    newSocket.on("online-users", (data: any) => {
       // console.log(data);
       setOnlineUsers(data);
     });
     // new message recieved event
-    socket.on("update-input", (data: any) => {
-      // console.log(data);
-      fetchMessages();
+    newSocket.on("global-chat-message", (data) => {
+      const msg: Message = {
+        text: data.text,
+        user: data.user,
+        createdAt: data.createdAt,
+        senderId: data.senderId,
+      };
+      addMsg(msg);
     });
-  };
-
-  const updateGeoLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        // console.log("position => ", position);
-        const coords = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-        console.log("location updated")
-        socket.emit("location-update", coords);
-      },
-      (error) => {
-        // throw error to redirect to error page
-        console.log(error);
-      }
-    );
+    setSocket(newSocket);
+    return newSocket;
   };
 
   useEffect(() => {
-    // geolocation
-    if (!navigator.geolocation) {
-      alert("location access not available");
-      
-      // TODO: display error message when location not found or incorrect location and disconnect socket connection
-    }
-    const intervalId = setInterval(
-      updateGeoLocation,
-      10000);
-
     fetchMessages();
-    socketInitializer();
+    const newSocketPromise = socketInitializer();
 
     return () => {
-      clearInterval(intervalId);
-      socket.disconnect();
-      socket.off("location-update");
-      socket.off("connect");
-      socket.off("update-input");
-      socket.off("disconnect");
+      newSocketPromise.then((newSocket) => {
+        console.log("client side disconnect");
+        newSocket!.disconnect();
+        newSocket!.off("location-update");
+        newSocket!.off("connect");
+        newSocket!.off("update-input");
+        newSocket!.off("disconnect");
+      });
     };
   }, []);
 
@@ -104,15 +103,28 @@ function ChatRoomPage() {
 
   return (
     <>
-      <SessionProvider>
-        {messages !== undefined && (
+      
+        {status && <div className={styles.status}>{status}</div>}
+        {messages !== undefined && !status && (
           <div className={styles.online}>
             <h1>Online Users: {onlineUsers}</h1>
           </div>
         )}
-        <ChatList messages={messages} />
-        <Input setMessages={setMessages} messages={messages} socket={socket} />
-      </SessionProvider>
+        {!status && (
+          <>
+            <ChatList
+              messages={messages}
+              session={session}
+              status={sessionStatus}
+            />
+            <Input
+              setMessages={setMessages}
+              messages={messages}
+              socket={socket}
+              session={session}
+            />
+          </>
+        )}
     </>
   );
 }
