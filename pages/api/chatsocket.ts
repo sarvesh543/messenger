@@ -1,14 +1,14 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { ObjectId } from "mongodb";
 import { Server } from "socket.io";
 import clientPromise from "../../lib/mongodb";
 import cookie from "cookie";
-import { authOptions } from "./auth/[...nextauth]";
 import {
-  getDistanceFromLatLonInKm,
+  addMessageToGlobalChat,
   getSessionFromSessionToken,
   getUserFromSession,
+  setMongoWatch,
 } from "../../lib/chatSocketFunctions";
+import { Message } from "../../typings";
 
 // TODO: refactor this mess
 export default async function handler(req: any, res: any) {
@@ -22,8 +22,10 @@ export default async function handler(req: any, res: any) {
     console.log("Socket is initializing");
     const io = new Server(res.socket.server);
     res.socket.server.io = io;
+    // set mongo watcher
+    await setMongoWatch(mongo, io);
 
-    global.neighbours = {}; // does not include user
+    global.connections = {}; // does not include user
 
     // socket connection and listening for client events
     io.on("connection", async (socket) => {
@@ -46,10 +48,12 @@ export default async function handler(req: any, res: any) {
       const user = await getUserFromSession(session, mongo);
       // connected with authenticated user
       // add this to active clients
-      global.neighbours[socket.id] = {
-        neighbours: { [socket.id]: socket },
-        socket: socket,
-      };
+      if (global.connections[user!._id.toString()]) {
+        console.log("Disconnecting old connection...");
+        global.connections[user!._id.toString()].disconnect(true);
+      }
+      global.connections[user!._id.toString()] = socket;
+      io.emit("online-users", Object.keys(global.connections).length);
       // setting user properties on socket of that user
       socket.data.user = {
         name: user?.name,
@@ -57,7 +61,7 @@ export default async function handler(req: any, res: any) {
         id: user?._id.toString(),
         timeout: new Date().valueOf(),
       };
-  
+
       // console.log(socket.data.user.email);
 
       // listening for client events "user-message"
@@ -65,132 +69,30 @@ export default async function handler(req: any, res: any) {
         console.log("=============");
         // console.log(socket.data.user);
         if (!socket.data.user) return;
+        // all good, send message
+        const createdAt = new Date().toISOString();
+        const message: Message = {
+          text: msg,
+          createdAt,
+          user: socket.data.user.name,
+          senderId: socket.data.user.id,
+        };
+        addMessageToGlobalChat(message, mongo);
 
-        // update message for all active users
-        const uniqueUser: any = {};
-        let count = 0;
-
-        // if everything works then change this to global neighbours
-        // console.log(Object.keys(global.neighbours[socket.id].neighbours));
-        Object.keys(global.neighbours[socket.id].neighbours).forEach(
-          (otherSocketId) => {
-            const otherSocket =
-              global.neighbours[socket.id].neighbours[otherSocketId];
-            if (!otherSocket.data.user || !otherSocket.data.user.location)
-              return;
-            if (!socket.data.user.location) return;
-
-            if (!uniqueUser[otherSocket.data.user.id]) {
-              // mark user as processed
-              uniqueUser[otherSocket.data.user.id] = true;
-              // all good, send message
-              const createdAt = new Date();
-              const message = {
-                text: msg,
-                createdAt,
-                isUser: socket.data.user.id === otherSocket.data.user.id,
-                user: socket.data.user.name,
-                senderId: socket.data.user.id,
-              };
-              // update message asyncronously
-              mongo
-                .db()
-                .collection("users")
-                .updateOne(
-                  { _id: new ObjectId(otherSocket.data.user.id) },
-                  {
-                    $push: {
-                      messages: {
-                        $each: [message],
-                        $slice: -50,
-                      },
-                    },
-                  }
-                );
-
-              count += 1;
-            }
-            // send message to client that messages have been updated
-            io.to(otherSocket.id).emit("update-input", "message received");
-          }
+        console.log(
+          "Number of global connections => ",
+          Object.keys(global.connections).length
         );
-
-        console.log("Number of active users => ", count);
         console.log("=============");
-      });
-      // location update
-      socket.on("location-update", async (location: any) => {
-        if (!location.latitude || !location.longitude) {
-          console.log("Invalid location from => ", socket.data.user.name);
-          return;
-        }
-        console.log("///////////////////////////");
-        console.log("Location update from => ", socket.data.user.name);
-        socket.data.user.timeout = new Date().valueOf();
-        socket.data.user.location = location;
-        //add this user to active clients which are within d distance from here
-        Object.keys(global.neighbours).forEach((socketId) => {
-          const tempSocket = global.neighbours[socketId].socket;
-          console.log("tempSocket => ", tempSocket.data.user);
-
-          if (!tempSocket.data.user.location){
-            if(tempSocket.data.user.timeout + 60*1000 < new Date().valueOf()){
-              // no location recieved in last 60 seconds
-              delete global.neighbours[tempSocket.id];
-              delete global.neighbours[socket.id].neighbours[tempSocket.id];
-
-              tempSocket.disconnect(true);
-            }
-            return;
-          }
-          const dist = getDistanceFromLatLonInKm(
-            socket.data.user.location.latitude,
-            socket.data.user.location.longitude,
-            tempSocket.data.user.location.latitude,
-            tempSocket.data.user.location.longitude
-          );
-          console.log(dist," above one");
-          if (dist > parseInt(process.env.THRESHOLD_DISTANCE!)) {
-            delete global.neighbours[socket.id].neighbours[tempSocket.id];
-            delete global.neighbours[tempSocket.id].neighbours[socket.id];
-            return;
-          }
-          // all good, add to neighbours
-          global.neighbours[socket.id].neighbours[tempSocket.id] = tempSocket;
-          global.neighbours[tempSocket.id].neighbours[socket.id] = socket;
-          io.to(tempSocket.id).emit(
-            "online-users",
-            Object.keys(global.neighbours[tempSocket.id].neighbours).length
-          );
-          console.log("_________________________");
-          console.log("email => ", tempSocket.data.user.email);
-          console.log(
-            "connections => ",
-            Object.keys(global.neighbours[tempSocket.id].neighbours).length
-          );
-          console.log("_________________________");
-        });
-        console.log("///////////////////////////");
-        io.to(socket.id).emit(
-          "online-users",
-          Object.keys(global.neighbours[socket.id].neighbours).length
-        );
-        // console.log("global => ", Object.keys(global.neighbours).length);
       });
 
       // update online users on connect and disconnect events
       socket.on("disconnect", () => {
         // console.log("disconnected => ", io.sockets.sockets.keys());
-        const deletedId = socket.id;
+        const deletedId = socket.data.user.id;
         // console.log("deletedId => ", deletedId);
-        delete global.neighbours[deletedId];
-        Object.keys(global.neighbours).forEach((socketId) => {
-          delete global.neighbours[socketId].neighbours[deletedId];
-          io.to(socketId).emit(
-            "online-users",
-            Object.keys(global.neighbours[socketId].neighbours).length
-          );
-        });
+        delete global.connections[deletedId];
+        io.emit("online-users", Object.keys(global.connections).length);
       });
     });
   }

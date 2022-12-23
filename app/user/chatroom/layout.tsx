@@ -1,14 +1,13 @@
-import React from 'react'
-
+import React from "react";
+import Providers from "../../../components/Providers";
 
 function layout({ children }: { children: React.ReactNode }) {
   return (
-    
     <div>
-      {children}
+      <Providers>{children}</Providers>
       {/* <Input /> */}
     </div>
   );
 }
 
-export default layout
+export default layout;

@@ -1,5 +1,5 @@
 declare global {
-  var neighbours: any;
+  var connections: any;
 }
 
 export {};
