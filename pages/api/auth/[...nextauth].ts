@@ -20,7 +20,7 @@ export const authOptions = {
           name: profile.name,
           email: profile.email,
           image: profile.picture,
-          messages: [],
+          notifications: [],
         };
         return profileNew;
       },

@@ -1,53 +1,161 @@
-.container{
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    height:60px;
-    background-color: #d5d5d5;
-    margin:0px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    /* box-shadow: 0.25px 0.25px; */
+.container {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 60px;
+  background-color: #191516;
+  margin: 0px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  /* box-shadow: 0.25px 0.25px; */
 }
-.logo{
-    width: 2.5rem;
-    height: 2.5rem;
-    margin: 0.75rem
-}
-.title{
-    font-family: sans-serif;
-    font-weight: 700;
-}
-.main{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-.authbtn{
-    color: whitesmoke;
-    justify-self: flex-end;
-    text-decoration: none;
-    text-align: center;
-    line-height: 2.5rem;
-    cursor: default;
-    /* background-color: rgb(82, 196, 235); */
-    background-color: var(--primary);
-    border-radius: 0.5rem;
-    height: 2.5rem;
-    border: none;
-    padding: 0 1.5rem;
-    margin: 0.75rem;
-    transition: all 0.25s;
+.right {
+  display: flex;
+  align-items: center;
+  margin: 12px;
 }
 
-.authbtn:hover{
-    cursor:pointer;
-    /* background-color:rgb(60, 158, 190); */
-    background-color: var(--primary-shade);
-    line-height: 3rem;
-    height: 3rem;
-    padding:0rem 1.75rem;
-    font-weight: 600;
+.logo {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0.75rem;
+}
+.title {
+  font-family: sans-serif;
+  font-weight: 700;
+}
+.main {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.authbtn {
+  color: whitesmoke;
+  justify-self: flex-end;
+  text-decoration: none;
+  text-align: center;
+  line-height: 2.5rem;
+  cursor: default;
+  /* background-color: rgb(82, 196, 235); */
+  background-color: var(--primary);
+  border-radius: 0.5rem;
+  height: 2.5rem;
+  border: none;
+  padding: 0 1.5rem;
+  margin: 0.75rem;
+  transition: all 0.25s;
+}
+
+.authbtn:hover {
+  cursor: pointer;
+  /* background-color:rgb(60, 158, 190); */
+  background-color: var(--primary-shade);
+  line-height: 3rem;
+  height: 3rem;
+  padding: 0rem 1.75rem;
+  font-weight: 600;
+}
+.notificationIcon {
+  cursor: pointer;
+  transition: transform 0.25s;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.notificationIcon:hover {
+  transform: scale(1.1);
+}
+.notificationContainer::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #191516;
+}
+.notificationContainer {
+  position: fixed;
+  top: 70px;
+  right: 0px;
+  width: 300px;
+    max-width: 100%;
+max-height: calc(100% - 60px - 60px - 60px);
+    background-color: #191516;
+  border-radius: 0.5rem;
+  box-shadow: 0.25px 0.25px;
+  display: none;
+  flex-direction: column;
+  z-index: 100;
+  padding: 1rem;
+  margin-top: 2px;
+  margin-right: 5px
+}
+.notificationContainer:hover {
+    display: flex;
+}
+.notificationIcon:hover ~ .notificationContainer {
+  display: flex; 
+}
+.notificationContainer button:hover{
+    cursor: pointer;
+}
+.notMain{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    align-items: center;
+}
+.notIn{
+    background-color: rgb(56, 56, 56);
+    color: white;
+    border-radius: 0.5rem;
+    overflow-y: scroll;
+}
+.notIn p{
+    text-align: center;
+}
+.notIn::-webkit-scrollbar {
+  width: 2px;
+}
+.notIn::-webkit-scrollbar-track {
+  background: rgb(226, 255, 226);
+  border-radius: 100vw;
+}
+.notIn::-webkit-scrollbar-thumb {
+  background: linear-gradient(#2b29f9, #03f7f7);
+  border-radius: 100vw;
+}
+.notLeft{
+    display: flex;
+    flex-direction: column;
+}
+.notLeft a{
+    text-decoration: none;
+    color: #03f7f7;
+    transition: transform 0.25s;
+}
+.notLeft a:hover{
+    transform: scale(1.05);
+}
+.notLeft p{
+    color:white;
+    margin: 0;
+}
+
+.notButton{
+    cursor: pointer;
+    background-color: #03f7f7;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
+    border:none;
+    transition: padding 0.25s;
+}
+.notButton:hover{
+    padding: 0.75rem;
 }

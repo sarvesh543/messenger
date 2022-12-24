@@ -2,25 +2,26 @@
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
+import { useSocket } from "../providers/SocketProvider";
 import styles from "../styles/Input.module.css";
 import { Message } from "../typings";
 
 function Input({
   setMessages,
   messages,
-  socket,
   session
 }: {
   setMessages: Function;
   messages: Message[] | undefined;
-  socket:any;
   session: any;
 }) {
   const [message, setMessage] = useState<string>("");
+  const {emitEvent} = useSocket();
   const handleSubmit = async () => {
     if (message === "") return;
     // TODO: change id to proper id
     const messageToAdd: Message = {
+      _id: new Date().getMilliseconds.toString(), // tewmporary id
       text: message,
       user: session?.user?.name!,
       createdAt: new Date().toISOString(),
@@ -28,7 +29,7 @@ function Input({
     };
     setMessage("");
     setMessages([messageToAdd, ...messages!]);
-    socket.emit("user-message", messageToAdd.text)
+    emitEvent("user-message", messageToAdd.text)
     
   };
   return (

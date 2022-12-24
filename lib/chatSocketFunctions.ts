@@ -25,7 +25,7 @@ async function setMongoWatch(
   });
 }
 
-async function addMessageToGlobalChat(message: Message, mongo: MongoClient) {
+async function addMessageToGlobalChat(message: any, mongo: MongoClient) {
   const result = await mongo.db().collection("globalChat").insertOne(message);
   return result;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import Providers from "../../../components/Providers";
+import Providers from "../../../providers/Providers";
 
 function layout({ children }: { children: React.ReactNode }) {
   return (

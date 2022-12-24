@@ -3,6 +3,7 @@ import Image from "next/image";
 import React from "react";
 import clientPromise from "../../../lib/mongodb";
 import styles from "../../../styles//UserProfile.module.css";
+import MessageButton from "./MessageButton";
 
 async function UserDetails({ params: { userId } }: any) {
   const mongo = await clientPromise;
@@ -31,9 +32,7 @@ async function UserDetails({ params: { userId } }: any) {
       <p className={styles.about}>
         {user.about ? user.about : "No description provided"}
       </p>
-      <button className={styles.btn}>
-        Message <img src="/chat.png" alt="chat message icon" />
-      </button>
+      <MessageButton className={styles.btn} friendId={user._id.toString()}/>
     </main>
   );
 }

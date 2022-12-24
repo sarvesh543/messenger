@@ -22,7 +22,7 @@ function ChatList({
       {messages.map((message, index) => {
         const isUser = session.user.id === message.senderId;
         return (
-          <React.Fragment key={messages.length - index}>
+          <React.Fragment key={message._id}>
             <div
               className={`${styles.withArrow} ${
                 isUser && styles.userWithArrow

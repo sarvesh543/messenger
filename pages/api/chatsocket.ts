@@ -71,7 +71,7 @@ export default async function handler(req: any, res: any) {
         if (!socket.data.user) return;
         // all good, send message
         const createdAt = new Date().toISOString();
-        const message: Message = {
+        const message: any = {
           text: msg,
           createdAt,
           user: socket.data.user.name,

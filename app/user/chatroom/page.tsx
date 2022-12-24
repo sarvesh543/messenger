@@ -7,16 +7,15 @@ import Input from "../../../components/Input";
 import { Message } from "../../../typings";
 import io, { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
+import { useSocket, useSubscribe } from "../../../providers/SocketProvider";
 
 function ChatRoomPage() {
-  const [socket, setSocket] = useState<Socket<
-    DefaultEventsMap,
-    DefaultEventsMap
-  > | null>(null);
+  // TODO: wrap the whole page in a socket provider and implement list of active chats
+  
   // state variable to store messages, online Users
   const [messages, setMessages] = useState<Message[] | undefined>(undefined);
   const [onlineUsers, setOnlineUsers] = useState(1);
-  const [status, setStatus] = useState<string | undefined>("Connecting...");
+
   const {
     data: session,
     status: sessionStatus,
@@ -27,6 +26,20 @@ function ChatRoomPage() {
   messageRef.current = messages;
   const sessionRef = useRef<any>();
   sessionRef.current = session;
+
+  // get socket and subscribe to events
+  const { status } = useSocket();
+
+  // subscribe to events
+  useSubscribe("online-users", (data: any) => {
+    // console.log(data);
+    setOnlineUsers(data);
+  });
+  useSubscribe("global-chat-message", (data) => {
+    const msg: Message = data;
+    addMsg(msg);
+    fetchMessages();
+  });
 
   // TODO: add a useEffect to fetch messages from the database
   // TODO: add location range indicator besides username
@@ -50,62 +63,17 @@ function ChatRoomPage() {
       signOut({ callbackUrl: `${window.location.origin}/auth/signin` });
     }
   };
-  const socketInitializer = async () => {
-    if (socket) return;
-    await fetch("/api/chatsocket");
-    const newSocket = io();
-    newSocket.on("connect", () => {
-      setStatus(undefined);
-      console.log("connected");
-    });
-    newSocket.on("disconnect", () => {
-      setStatus("Disconnected... Please refresh the page");
-      console.log("disconnected");
-      // throw new Error("Please make sure you have enabled location access");
-    });
-
-    // online users updated
-    newSocket.on("online-users", (data: any) => {
-      // console.log(data);
-      setOnlineUsers(data);
-    });
-    // new message recieved event
-    newSocket.on("global-chat-message", (data) => {
-      const msg: Message = {
-        text: data.text,
-        user: data.user,
-        createdAt: data.createdAt,
-        senderId: data.senderId,
-      };
-      addMsg(msg);
-    });
-    setSocket(newSocket);
-    return newSocket;
-  };
 
   useEffect(() => {
     fetchMessages();
-    const newSocketPromise = socketInitializer();
-
-    return () => {
-      newSocketPromise.then((newSocket) => {
-        console.log("client side disconnect");
-        newSocket!.disconnect();
-        newSocket!.off("location-update");
-        newSocket!.off("connect");
-        newSocket!.off("update-input");
-        newSocket!.off("disconnect");
-      });
-    };
   }, []);
 
   // if(socket == null) return <Loading/>
 
   return (
     <>
-      
         {status && <div className={styles.status}>{status}</div>}
-        {messages !== undefined && !status && (
+        {messages !== undefined && !status && sessionStatus!=="loading" && (
           <div className={styles.online}>
             <h1>Online Users: {onlineUsers}</h1>
           </div>
@@ -120,7 +88,6 @@ function ChatRoomPage() {
             <Input
               setMessages={setMessages}
               messages={messages}
-              socket={socket}
               session={session}
             />
           </>
