@@ -81,6 +81,9 @@
   font-weight: 600;
   transition: all 0.25s;
   align-self: flex-start;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   /* text-align: end; */
 }
 .name:hover{
