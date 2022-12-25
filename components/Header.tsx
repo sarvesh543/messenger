@@ -7,8 +7,8 @@ import clientPromise from "../lib/mongodb";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
 import styles from "../styles/Header.module.css";
 import { NotificaionType } from "../typings";
-import AcceptInviteButton from "./AcceptInviteButton";
 import AuthButton from "./AuthButton";
+import NotificationInvites from "./NotificationInvites";
 
 async function Header() {
   const session = await unstable_getServerSession(authOptions);
@@ -21,7 +21,9 @@ async function Header() {
       .db()
       .collection("users")
       .findOne({ _id: new ObjectId(session.user.id) }, { projection: { notifications: 1 } });
-    notifications = result?.notifications;
+    notifications = result?.notifications.map((notification: NotificaionType) => {
+      return {...notification, _id: notification._id.toString()}
+    });
     }
   // placeholder notifications
   // notifications = [
@@ -56,40 +58,7 @@ async function Header() {
       </div>
       <div className={styles.right}>
         <AuthButton session={session} />
-        {session && (
-          <>
-            <Image
-              className={styles.notificationIcon}
-              src="/notification.png"
-              alt="notification icon"
-              width={32}
-              height={32}
-            />
-            <div className={styles.notificationContainer}>
-              <div className={styles.notIn}>
-                {notifications.length === 0 && <p>No Notifications Here</p>}
-                {notifications.length !== 0 &&
-                  notifications.map((notification) => {
-                    return (
-                      <React.Fragment key={notification._id}>
-                        <div className={styles.notMain}>
-                          <div className={styles.notLeft}>
-                            <Link href={`/user/${notification.userId}`}>
-                              {notification.user}
-                            </Link>
-                            <p>{notification.message}</p>
-                          </div>
-                          {/* implement button logic */}
-                          <AcceptInviteButton className={styles.notButton} notificationId={notification._id.toString()}/>
-                        </div>
-                        <hr />
-                      </React.Fragment>
-                    );
-                  })}
-              </div>
-            </div>
-          </>
-        )}
+        {session && <NotificationInvites notifications={notifications}/>}
       </div>
     </header>
   );

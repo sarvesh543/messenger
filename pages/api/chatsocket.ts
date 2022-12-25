@@ -3,12 +3,13 @@ import { Server } from "socket.io";
 import clientPromise from "../../lib/mongodb";
 import cookie from "cookie";
 import {
-  addMessageToGlobalChat,
+  addMessageToChat,
   getSessionFromSessionToken,
   getUserFromSession,
   setMongoWatch,
 } from "../../lib/chatSocketFunctions";
 import { Message } from "../../typings";
+import { ObjectId } from "mongodb";
 
 // TODO: refactor this mess
 export default async function handler(req: any, res: any) {
@@ -40,7 +41,7 @@ export default async function handler(req: any, res: any) {
 
       if (session === null || session.expires < new Date()) {
         // session does not exist or has expired
-        // console.log("sessionToken => ", sessionToken);
+        console.log("sessionToken => ", sessionToken);
         console.log("session => ", session);
         socket.disconnect(true);
         return;
@@ -61,23 +62,29 @@ export default async function handler(req: any, res: any) {
         id: user?._id.toString(),
         timeout: new Date().valueOf(),
       };
+      user!.chatIds.forEach((chat:any) => {
+        const chatId = chat.chatId;
+        socket.join(chatId.toString());
+        console.log(socket.data.user.id," ==joining== ",chatId.toString());
+      });
 
       // console.log(socket.data.user.email);
 
       // listening for client events "user-message"
-      socket.on("user-message", async (msg: any) => {
+      socket.on("user-message", async (data: any) => {
         console.log("=============");
         // console.log(socket.data.user);
         if (!socket.data.user) return;
         // all good, send message
         const createdAt = new Date().toISOString();
-        const message: any = {
-          text: msg,
+        const message: Message = {
+          _id: new ObjectId(),
+          text: data.message,
           createdAt,
           user: socket.data.user.name,
           senderId: socket.data.user.id,
         };
-        addMessageToGlobalChat(message, mongo);
+        addMessageToChat(message, mongo, data.chatId, socket);
 
         console.log(
           "Number of global connections => ",

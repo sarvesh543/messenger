@@ -2,10 +2,9 @@
 import React from "react";
 import { Message } from "../typings";
 import styles from "../styles/ChatRoom.module.css";
-import Loading from "../app/user/chatroom/loading";
+import Loading from "../app/user/chatroom/[chatId]/loading";
 import { format } from "timeago.js";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 
 function ChatList({
   messages,
@@ -19,10 +18,10 @@ function ChatList({
   if (messages === undefined || status === "loading") return <Loading />;
   return (
     <div className={styles.container}>
-      {messages.map((message, index) => {
+      {messages.map((message) => {
         const isUser = session.user.id === message.senderId;
         return (
-          <React.Fragment key={message._id}>
+          <React.Fragment key={message._id.toString()}>
             <div
               className={`${styles.withArrow} ${
                 isUser && styles.userWithArrow
@@ -44,7 +43,7 @@ function ChatList({
               href={`/user/${message.senderId}`}
               className={`${styles.name} ${isUser && styles.userName}`}
             >
-                {message.user}
+              {message.user}
             </Link>
           </React.Fragment>
         );

@@ -18,7 +18,8 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
     DefaultEventsMap,
     DefaultEventsMap
   > | null>(null);
-  const [status, setStatus] = useState<any>("Connecting...");
+  const [status, setStatus] = useState<string | undefined>("Connecting...");
+  
   // TODO: change to more descriptive status messages
 
   const socketInitializer = async () => {
@@ -50,7 +51,10 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
       });
     };
   }, []);
-
+  useEffect(() => {
+    console.log("socket changed => ", socket);
+  },[socket])
+ 
   return (
     <SocketContext.Provider value={{ socket: socket, status: status }}>
       {children}
@@ -68,7 +72,7 @@ export const useSocket = () => {
   }
   // subscribe to an event
 
-  return { status, emitEvent: socket? socket.emit : ()=>{}};
+  return { status, emitEvent: socket? socket.emit : ()=>{}, socket};
 };
 
 // useSubscribe hook

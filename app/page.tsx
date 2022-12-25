@@ -11,7 +11,12 @@ export default async function Home() {
   // TODO: implement functionality to edit profile and details like about
   if (session) {
     return (
-      <main className={styles.main}>
+      <div style={{ overflowY: "scroll", height: "calc(100vh - 70px)" }}
+      >
+
+      <main
+        className={styles.main}
+        >
         <h1>Change style of this page later</h1>
         <Image
           className={styles.profile}
@@ -27,8 +32,11 @@ export default async function Home() {
           <div className={styles.three}>Email:</div>
           <div className={styles.four}>{session.user?.email}</div>
         </div>
-        <Link href="/user/chatroom" className={styles.btn}>Go To ChatRoom</Link>
+        <Link href="/user/chatroom" className={styles.btn}>
+          Go To ChatRoom
+        </Link>
       </main>
+      </div>
     );
   } else {
     return (

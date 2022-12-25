@@ -3,14 +3,18 @@
 function AcceptInviteButton({
   className,
   notificationId,
+  link,
+  text
 }: {
   className: string;
   notificationId: string;
+  link: string;
+  text: string;
 }) {
   const handleClick = async () => {
     try {
       console.log("button clicked");
-      const res = await fetch("/api/user/acceptInvite", {
+      const res = await fetch(link, {
         method: "POST",
         body: JSON.stringify({ notificationId }),
       });
@@ -20,7 +24,7 @@ function AcceptInviteButton({
   };
   return (
     <button className={className} onClick={handleClick}>
-      Accept
+      {text}
     </button>
   );
 }

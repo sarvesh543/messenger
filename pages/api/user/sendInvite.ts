@@ -32,24 +32,47 @@ export default async function handler(
       _id: new ObjectId(),
       type: 0,
       message: "has invited you to a chat",
+      userImage: session.user.image,
       user: session.user.name,
       userId: session.user.id,
     };
-    // TODO: check if already accepted and friends
-    // exists in notifications 
-    const exists = await mongo
+    // check if already accepted and friends
+    const friends = await mongo
+      .db()
+      .collection("chats")
+      .findOne({
+        type: 0,
+        users: { $all: [new ObjectId(session.user.id), new ObjectId(friendId)] },
+      });
+    if (friends) return res.status(400).json({ error: "Already chatting" });
+    // exists in notifications
+    const existsWithFriend = await mongo
       .db()
       .collection("users")
       .findOne({
         _id: new ObjectId(friendId),
         notifications: {
-            $elemMatch: {
-                userId: session.user.id,
-            }
+          $elemMatch: {
+            userId: session.user.id,
+          },
         },
       });
-    if(exists) return res.status(400).json({error: "Invite already sent"});
-      
+    if (existsWithFriend)
+      return res.status(400).json({ error: "Invite already sent" });
+    const friendSentInvite = await mongo
+      .db()
+      .collection("users")
+      .findOne({
+        _id: new ObjectId(session.user.id),
+        notifications: {
+          $elemMatch: {
+            userId: friendId,
+          },
+        },
+      });
+    if (friendSentInvite)
+      return res.status(400).json({ error: "Pending invite from friend" });
+
     await mongo
       .db()
       .collection("users")

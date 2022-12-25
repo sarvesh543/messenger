@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react'
 
 function head() {
   return (
     <>
-      <title>Chat Home</title>
+      <title>Chat Room</title>
       <meta
         content="width=device-width, height=device-height, initial-scale=1"
         name="viewport"
@@ -13,4 +13,4 @@ function head() {
   );
 }
 
-export default head;
+export default head

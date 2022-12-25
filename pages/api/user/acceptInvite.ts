@@ -21,14 +21,13 @@ export default async function handler(
     }
     const notificationId = JSON.parse(req.body).notificationId.toString();
     if (!notificationId)
-      return res.status(400).json({ error: "Friend id is required" });
+      return res.status(400).json({ error: "Notification id is required" });
 
     const mongo = await clientPromise;
 
     // TODO: handle invites from group later
 
     // check if already friends
-    
 
     const result = await mongo
       .db()
@@ -45,6 +44,49 @@ export default async function handler(
       );
     const notification = result?.notifications[0];
     // TODO: add to friends for both users
+    if (notification.type === 0) {
+      const chatObj = {
+        _id: new ObjectId(),
+        type: 0,
+        users: [
+          new ObjectId(session.user.id),
+          new ObjectId(notification.userId),
+        ],
+        messages: [],
+      };
+      await mongo.db().collection("chats").insertOne(chatObj);
+      await mongo
+        .db()
+        .collection("users")
+        .updateOne(
+          { _id: new ObjectId(session.user.id) },
+          {
+            $push: {
+              chatIds: {
+                chatId: chatObj._id,
+                chatName: notification.user,
+                image: notification.userImage,
+              },
+            },
+          }
+        );
+      // add chat photo later
+      await mongo
+        .db()
+        .collection("users")
+        .updateOne(
+          { _id: new ObjectId(notification.userId) },
+          {
+            $push: {
+              chatIds: {
+                chatId: chatObj._id,
+                chatName: session.user.name,
+                image: session.user.image,
+              },
+            },
+          }
+        );
+    }
 
     // remove notification
     await mongo
@@ -55,7 +97,7 @@ export default async function handler(
         { $pull: { notifications: { _id: new ObjectId(notificationId) } } }
       );
 
-      return res.status(200).json({ message: "Invite Accepted" });
+    return res.status(200).json({ message: "Invite Accepted" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "Internal server error" });
