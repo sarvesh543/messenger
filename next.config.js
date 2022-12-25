@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   swcMinify: true,
+  reactStrictMode: true,
   experimental: { appDir: true, allowMiddlewareResponseBody: true },
   images: {
     domains: ["lh3.googleusercontent.com"],

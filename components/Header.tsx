@@ -1,9 +1,47 @@
+import { ObjectId } from "mongodb";
+import { unstable_getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
+import clientPromise from "../lib/mongodb";
+import { authOptions } from "../pages/api/auth/[...nextauth]";
 import styles from "../styles/Header.module.css";
+import { NotificaionType } from "../typings";
 import AuthButton from "./AuthButton";
+import NotificationInvites from "./NotificationInvites";
 
-function Header() {
+async function Header() {
+  const session = await unstable_getServerSession(authOptions);
+  // get notifications from database
+  let notifications:NotificaionType[]=[];
+  
+  const mongo = await clientPromise;
+  if (session) {
+    const result = await mongo
+      .db()
+      .collection("users")
+      .findOne({ _id: new ObjectId(session.user.id) }, { projection: { notifications: 1 } });
+    notifications = result?.notifications.map((notification: NotificaionType) => {
+      return {...notification, _id: notification._id.toString()}
+    });
+    }
+  // placeholder notifications
+  // notifications = [
+  //   {
+  //     _id: "1",
+  //     type: 0, // 0 for chat invite, 1 for group invite
+  //     user: "Sarvesh",
+  //     userId: "123",
+  //     message: "chat invite",
+  //   },
+  //   {
+  //     _id: "2",
+  //     type: 0, // 0 for chat invite, 1 for group invite
+  //     user: "other user",
+  //     userId: "1234",
+  //     message: "group invite",
+  //   },
+  // ];
   return (
     <header className={styles.container}>
       <div className={styles.main}>
@@ -18,7 +56,10 @@ function Header() {
         </Link>
         <h1 className={styles.title}>MessLoc</h1>
       </div>
-      <AuthButton />
+      <div className={styles.right}>
+        <AuthButton session={session} />
+        {session && <NotificationInvites notifications={notifications}/>}
+      </div>
     </header>
   );
 }

@@ -1,42 +1,49 @@
 "use client";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
+import { useSocket } from "../providers/SocketProvider";
 import styles from "../styles/Input.module.css";
 import { Message } from "../typings";
 
 function Input({
   setMessages,
   messages,
-  socket,
-  session
+  session,
+  chatId
 }: {
   setMessages: Function;
   messages: Message[] | undefined;
-  socket:any;
   session: any;
+  chatId: string;
 }) {
   const [message, setMessage] = useState<string>("");
+  const { emitEvent, status, socket } = useSocket();
   const handleSubmit = async () => {
     if (message === "") return;
     // TODO: change id to proper id
     const messageToAdd: Message = {
+      _id: new Date().getMilliseconds().toString(), // tewmporary id
       text: message,
       user: session?.user?.name!,
       createdAt: new Date().toISOString(),
       senderId: session?.user?.id!,
     };
+    
     setMessage("");
     setMessages([messageToAdd, ...messages!]);
-    socket.emit("user-message", messageToAdd.text)
+    const data = {
+      message: messageToAdd.text,
+      chatId: chatId,
+    };
     
+    socket!.emit("user-message", data);
   };
   return (
     <footer className={styles.footer}>
       <div className={styles.main}>
         <input
           spellCheck="false"
-          disabled={messages===undefined}
+          disabled={messages === undefined}
           className={styles.message}
           type="text"
           placeholder="Type a message..."

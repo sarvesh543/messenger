@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "../../../lib/mongodb";
 import { UserProfile } from "../../../typings";
+import { ObjectId } from "mongodb";
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -15,12 +16,21 @@ export const authOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       profile: async (profile: any) => {
+        const mongo = await clientPromise;
+
         const profileNew: UserProfile = {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: profile.picture,
-          messages: [],
+          notifications: [],
+          chatIds: [
+            {
+              chatId: new ObjectId(process.env.GLOBAL_CHAT_ID!),
+              chatName: "Global Chat",
+              image: "/earth.png",
+            },
+          ],
         };
         return profileNew;
       },
@@ -36,6 +46,7 @@ export const authOptions = {
         name: user.name,
         email: user.email,
         image: user.image,
+        chatIds: user.chatIds,
       };
       // console.log(user)
       // sessionClone.user.id = "hello";

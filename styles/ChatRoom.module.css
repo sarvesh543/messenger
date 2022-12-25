@@ -11,10 +11,25 @@
   background-color: rgb(226, 255, 226);
   flex-direction: column-reverse;
 }
+.container::-webkit-scrollbar {
+  width: 5px;
+}
+.container::-webkit-scrollbar-track {
+  background: rgb(226, 255, 226);
+  border-radius: 100vw;
+}
+.container::-webkit-scrollbar-thumb {
+  background: linear-gradient(#2b29f9, #03f7f7);
+  border-radius: 100vw;
+}
 .online {
   position: fixed;
   z-index: 50;
-  width:100%;
+  width:max-content;
+  left:0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   margin-top: -20px;
   justify-content: center;

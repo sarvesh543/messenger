@@ -11,21 +11,32 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-    if(req.method !== "GET") return res.status(405).json({error: "Method Not Allowed"});
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method Not Allowed" });
 
   try {
     const session = await unstable_getServerSession(req, res, authOptions);
     if (!session) {
       return res.status(401).json({ error: "Unauthorized" });
     }
+    const notificationId = JSON.parse(req.body).notificationId.toString();
+    if (!notificationId)
+      return res.status(400).json({ error: "Notification id is required" });
+
     const mongo = await clientPromise;
-    const messages = await mongo
+
+    // remove notification
+    await mongo
       .db()
-      .collection("globalChat")
-      .find({}).toArray();
-    return res.status(200).json(messages.reverse());
+      .collection("users")
+      .updateOne(
+        { _id: new ObjectId(session.user.id) },
+        { $pull: { notifications: { _id: new ObjectId(notificationId) } } }
+      );
+
+    return res.status(200).json({ message: "Invite Rejected" });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
