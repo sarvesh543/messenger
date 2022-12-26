@@ -62,36 +62,13 @@ export default async function handler(req: any, res: any) {
         id: user?._id.toString(),
         timeout: new Date().valueOf(),
       };
-      user!.chatIds.forEach((chat:any) => {
+      user!.chatIds.forEach((chat: any) => {
         const chatId = chat.chatId;
         socket.join(chatId.toString());
-        console.log(socket.data.user.id," ==joining== ",chatId.toString());
+        console.log(socket.data.user.id, " ==joining== ", chatId.toString());
       });
 
       // console.log(socket.data.user.email);
-
-      // listening for client events "user-message"
-      socket.on("user-message", async (data: any) => {
-        console.log("=============");
-        // console.log(socket.data.user);
-        if (!socket.data.user) return;
-        // all good, send message
-        const createdAt = new Date().toISOString();
-        const message: Message = {
-          _id: new ObjectId(),
-          text: data.message,
-          createdAt,
-          user: socket.data.user.name,
-          senderId: socket.data.user.id,
-        };
-        addMessageToChat(message, mongo, data.chatId, socket);
-
-        console.log(
-          "Number of global connections => ",
-          Object.keys(global.connections).length
-        );
-        console.log("=============");
-      });
 
       // update online users on connect and disconnect events
       socket.on("disconnect", () => {

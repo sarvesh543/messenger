@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -8,15 +8,16 @@ import { NotificaionType } from "../typings";
 import AcceptInviteButton from "./AcceptInviteButton";
 
 type Props = {
-    notifications: NotificaionType[];
-}
+  notifications: NotificaionType[];
+};
 
-function NotificationInvites({notifications: defaultNot}: Props) {
-    const [notifications, setNotifications] = useState<NotificaionType[]>(defaultNot);
-    useSubscribe("notifications", (data) => {
-        setNotifications(data);
-        console.log("received notifications");
-    })
+function NotificationInvites({ notifications: defaultNot }: Props) {
+  const [notifications, setNotifications] =
+    useState<NotificaionType[]>(defaultNot);
+  useSubscribe("notifications", (data) => {
+    setNotifications(data);
+    console.log("received notifications");
+  });
   return (
     <>
       <Image
@@ -41,20 +42,21 @@ function NotificationInvites({notifications: defaultNot}: Props) {
                       <p>{notification.message}</p>
                     </div>
                     {/* implement button logic */}
-                    <AcceptInviteButton
-                    link={"/api/user/acceptInvite"}
-                      className={styles.notButton}
-                      notificationId={notification._id.toString()}
-                      text="Accept"
-                    />
-                    <AcceptInviteButton
-                    link={"/api/user/rejectInvite"}
-                      className={`${styles.notButton} ${styles.notButtonDecline}`}
-                      notificationId={notification._id.toString()}
+                    <div className={styles.notButtonContainer}>
+                      <AcceptInviteButton
+                        link={"/api/user/acceptInvite"}
+                        className={styles.notButton}
+                        notificationId={notification._id.toString()}
+                        text="Accept"
+                      />
+                      <AcceptInviteButton
+                        link={"/api/user/rejectInvite"}
+                        className={`${styles.notButton} ${styles.notButtonDecline}`}
+                        notificationId={notification._id.toString()}
                         text="Reject"
-                    />
+                      />
+                    </div>
                   </div>
-                  <hr />
                 </React.Fragment>
               );
             })}
@@ -64,4 +66,4 @@ function NotificationInvites({notifications: defaultNot}: Props) {
   );
 }
 
-export default NotificationInvites
+export default NotificationInvites;

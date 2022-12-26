@@ -15,7 +15,7 @@
 .right {
   display: flex;
   align-items: center;
-  margin: 12px;
+  margin: 0px 12px;
 }
 
 .logo {
@@ -80,48 +80,51 @@
 }
 .notificationContainer {
   position: fixed;
-  top: 70px;
+  top: 60px;
   right: 0px;
   width: 300px;
-    max-width: 90%;
-max-height: calc(100% - 60px - 60px - 60px);
-    background-color: #191516;
+  max-width: 90%;
+  max-height: calc(100% - 60px - 60px - 60px);
+  background-color: #191516;
   border-radius: 0.5rem;
   box-shadow: 0.25px 0.25px;
-  display: none;
+  display: flex;
   flex-direction: column;
   z-index: 100;
   padding: 1rem;
-  margin-top: 2px;
-  margin-right: 5px
+  margin-top: 20px;
+  margin-right: 5px;
+  margin-left: 5px;
 }
 .notificationContainer:hover {
-    display: flex;
+  display: flex;
 }
 .notificationIcon:hover ~ .notificationContainer {
-  display: flex; 
+  display: flex;
 }
-.notificationContainer button:hover{
-    cursor: pointer;
+.notificationContainer button:hover {
+  cursor: pointer;
 }
-.notMain{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 10px;
-    align-items: center;
+.notMain {
+  margin: 6px 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+  align-items: center;
+  /* background-color: rgb(56, 56, 56); */
 }
-.notIn{
-    background-color: rgb(56, 56, 56);
-    color: white;
-    border-radius: 0.5rem;
-    overflow-y: scroll;
+.notIn {
+  color: white;
+  border-radius: 0.5rem;
+  overflow-y: scroll;
 }
-.notIn p{
-    text-align: center;
+.notIn p {
+  text-align: center;
 }
 .notIn::-webkit-scrollbar {
   width: 2px;
+  height: 2px;
 }
 .notIn::-webkit-scrollbar-track {
   background: rgb(226, 255, 226);
@@ -131,34 +134,41 @@ max-height: calc(100% - 60px - 60px - 60px);
   background: linear-gradient(#2b29f9, #03f7f7);
   border-radius: 100vw;
 }
-.notLeft{
-    display: flex;
-    flex-direction: column;
+.notLeft {
+  display: flex;
+  flex-wrap: nowrap;
+  min-width: 200px;
+  flex-direction: column;
 }
-.notLeft a{
-    text-decoration: none;
-    color: #03f7f7;
-    transition: transform 0.25s;
+.notLeft a {
+  text-decoration: none;
+  color: #03f7f7;
+  transition: transform 0.25s;
 }
-.notLeft a:hover{
-    transform: scale(1.05);
+.notLeft a:hover {
+  transform: scale(1.05);
 }
-.notLeft p{
-    color:white;
-    margin: 0;
+.notLeft p {
+  color: white;
+  margin: 0;
 }
-
-.notButton{
-    cursor: pointer;
-    background-color: #03f7f7;
-    padding: 0.6rem;
-    border-radius: 0.5rem;
-    border:none;
-    transition: padding 0.25s;
+.notButtonContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
-.notButton:hover{
-    padding: 0.75rem;
+.notButton {
+  cursor: pointer;
+  background-color: #03f7f7;
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  border: none;
+  margin: 3px;
+  transition: padding 0.25s;
 }
-.notButtonDecline{
+.notButton:hover {
+  padding: 0.75rem;
+}
+.notButtonDecline {
   background-color: crimson;
 }

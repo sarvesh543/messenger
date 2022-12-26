@@ -64,7 +64,7 @@ async function addMessageToChat(
   message: any,
   mongo: MongoClient,
   chatId: string,
-  socket: any
+  userId: string
 ) {
   const result = await mongo
     .db()
@@ -73,7 +73,7 @@ async function addMessageToChat(
       {
         _id: new ObjectId(chatId),
         users: {
-          $elemMatch: { $eq: new ObjectId(socket.data.user.id) },
+          $elemMatch: { $eq: new ObjectId(userId) },
         },
       },
       { $push: { messages: message } }

@@ -17,7 +17,7 @@ function Input({
   chatId: string;
 }) {
   const [message, setMessage] = useState<string>("");
-  const { emitEvent, status, socket } = useSocket();
+
   const handleSubmit = async () => {
     if (message === "") return;
     // TODO: change id to proper id
@@ -36,7 +36,8 @@ function Input({
       chatId: chatId,
     };
     
-    socket!.emit("user-message", data);
+    fetch("/api/user/sendMessage",{method:"POST",body:JSON.stringify(data)})
+
   };
   return (
     <footer className={styles.footer}>

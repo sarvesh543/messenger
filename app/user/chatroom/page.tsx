@@ -32,7 +32,7 @@ function ChatHome() {
                 className={styles.chatLink}
                 href={`/user/chatroom/${chat.chatId}`}
               >
-                Go to chat
+                Chat
               </Link>
             </div>
           );
