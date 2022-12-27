@@ -36,7 +36,7 @@ export default async function handler(
       senderId: session.user.id,
     };
     const mongo = await clientPromise;
-    addMessageToChat(message, mongo, chatId, session.user.id);
+    addMessageToChat(msg, mongo, chatId, session.user.id);
 
     return res.status(200).json({ message: "message sent" });
   } catch (err) {
