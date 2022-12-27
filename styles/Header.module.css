@@ -88,11 +88,11 @@
   background-color: #191516;
   border-radius: 0.5rem;
   box-shadow: 0.25px 0.25px;
-  display: flex;
+  display: none;
   flex-direction: column;
   z-index: 100;
   padding: 1rem;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-right: 5px;
   margin-left: 5px;
 }

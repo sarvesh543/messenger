@@ -1,0 +1,37 @@
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import styles from "../styles/ChatHeader.module.css";
+
+function ChatHeader({ chat }: any) {
+  // get notifications from database
+  console.log(chat);
+
+  return (
+    <header className={styles.container}>
+      <div className={styles.main}>
+        <Link href="/user/chatroom" className={styles.backContainer}>
+        <Image
+          className={styles.back}
+          src="/arrow-left.png"
+          width={32}
+          height={32}
+          alt="user or group profile"
+        />
+        <Image
+          className={styles.logo}
+          src={chat.image}
+          width={32}
+          height={32}
+          alt="user or group profile"
+        />
+        </Link>
+        <h2 className={styles.title}>{chat.chatName}</h2>
+      </div>
+      <div className={styles.right}>Context menu here</div>
+    </header>
+  );
+}
+
+export default ChatHeader;

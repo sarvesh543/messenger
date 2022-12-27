@@ -1,8 +1,12 @@
-import React from 'react'
-import ChatRoomPage from './ChatRoomPage';
+import React from "react";
+import ChatRoom from "./ChatRoom";
 
-function page({ params: { chatId } }: any) {
-  return <ChatRoomPage chatId={chatId} />;
+function ChatRoomPage({ params: { chatId } }: any) {
+  return (
+    <>
+      <ChatRoom chatId={chatId} />;
+    </>
+  );
 }
 
-export default page
+export default ChatRoomPage;

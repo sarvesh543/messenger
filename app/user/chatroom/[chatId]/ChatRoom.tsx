@@ -1,13 +1,14 @@
 "use client";
 import styles from "../../../../styles/ChatRoom.module.css";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import ChatList from "../../../../components/ChatList";
 import Input from "../../../../components/Input";
 import { Message } from "../../../../typings";
-import { useSocket, useSubscribe } from "../../../../providers/SocketProvider";
+import { useSubscribe } from "../../../../providers/SocketProvider";
+import ChatHeader from "../../../../components/ChatHeader";
 
-function ChatRoomPage({chatId}:any) {
+function ChatRoom({ chatId }: any) {
   // TODO: wrap the whole page in a socket provider and implement list of active chats
 
   // state variable to store messages, online Users
@@ -71,14 +72,12 @@ function ChatRoomPage({chatId}:any) {
 
   return (
     <>
-      {messages !== undefined && sessionStatus !== "loading" && (
-        <div className={styles.online}>
-          <h1>Online Users: {onlineUsers}</h1>
-        </div>
-      )}
-
-      {!status && (
+      {sessionStatus === "authenticated" && (
         <>
+          <ChatHeader chat={session?.user.chatIds.filter((chat:any)=>(chat.chatId===chatId))[0]}/>
+          <div className={styles.online}>
+            <h1>Online Users: {onlineUsers}</h1>
+          </div>
           <ChatList
             messages={messages?.map((msg) => {
               return { ...msg, _id: msg._id.toString() };
@@ -98,4 +97,4 @@ function ChatRoomPage({chatId}:any) {
   );
 }
 
-export default ChatRoomPage;
+export default ChatRoom;

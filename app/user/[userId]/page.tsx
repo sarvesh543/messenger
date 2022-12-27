@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import Image from "next/image";
 import React from "react";
+import Header from "../../../components/Header";
 import clientPromise from "../../../lib/mongodb";
 import styles from "../../../styles//UserProfile.module.css";
 import MessageButton from "./MessageButton";
@@ -20,22 +21,28 @@ async function UserDetails({ params: { userId } }: any) {
   // TODO: redirect to custom chat on message button click
   if (!user) return <div>Not Found</div>;
   return (
-    <div style={{ overflowY: "scroll", height: "calc(100vh - 70px)" }}>
-      <main className={styles.main}>
-        <Image
-          className={styles.profile}
-          src={user.image!}
-          alt="profile image"
-          width={100}
-          height={100}
-        />
-        <h1 className={styles.name}>{user.name}</h1>
-        <p className={styles.about}>
-          {user.about ? user.about : "No description provided"}
-        </p>
-        <MessageButton className={styles.btn} friendId={user._id.toString()} />
-      </main>
-    </div>
+    <>
+      <Header />
+      <div style={{ overflowY: "scroll", height: "calc(100vh - 70px)" }}>
+        <main className={styles.main}>
+          <Image
+            className={styles.profile}
+            src={user.image!}
+            alt="profile image"
+            width={100}
+            height={100}
+          />
+          <h1 className={styles.name}>{user.name}</h1>
+          <p className={styles.about}>
+            {user.about ? user.about : "No description provided"}
+          </p>
+          <MessageButton
+            className={styles.btn}
+            friendId={user._id.toString()}
+          />
+        </main>
+      </div>
+    </>
   );
 }
 

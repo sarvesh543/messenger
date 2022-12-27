@@ -13,35 +13,24 @@ import NotificationInvites from "./NotificationInvites";
 async function Header() {
   const session = await unstable_getServerSession(authOptions);
   // get notifications from database
-  let notifications:NotificaionType[]=[];
-  
+  let notifications: NotificaionType[] = [];
+
   const mongo = await clientPromise;
   if (session) {
     const result = await mongo
       .db()
       .collection("users")
-      .findOne({ _id: new ObjectId(session.user.id) }, { projection: { notifications: 1 } });
-    notifications = result?.notifications.map((notification: NotificaionType) => {
-      return {...notification, _id: notification._id.toString()}
-    });
-    }
-  // placeholder notifications
-  // notifications = [
-  //   {
-  //     _id: "1",
-  //     type: 0, // 0 for chat invite, 1 for group invite
-  //     user: "Sarvesh",
-  //     userId: "123",
-  //     message: "chat invite",
-  //   },
-  //   {
-  //     _id: "2",
-  //     type: 0, // 0 for chat invite, 1 for group invite
-  //     user: "other user",
-  //     userId: "1234",
-  //     message: "group invite",
-  //   },
-  // ];
+      .findOne(
+        { _id: new ObjectId(session.user.id) },
+        { projection: { notifications: 1 } }
+      );
+    notifications = result?.notifications.map(
+      (notification: NotificaionType) => {
+        return { ...notification, _id: notification._id.toString() };
+      }
+    );
+  }
+
   return (
     <header className={styles.container}>
       <div className={styles.main}>
@@ -58,7 +47,7 @@ async function Header() {
       </div>
       <div className={styles.right}>
         <AuthButton session={session} />
-        {session && <NotificationInvites notifications={notifications}/>}
+        {session && <NotificationInvites notifications={notifications} />}
       </div>
     </header>
   );

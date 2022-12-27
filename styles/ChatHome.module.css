@@ -18,8 +18,7 @@
   overflow-y: scroll;
   max-height: calc(100vh - 250px);
   width: 100%;
-  padding: 20px 10px;
-  margin-top: 35px;
+  padding: 0px 10px;
 }
 .chatImage {
   border-radius: 100%;
@@ -64,4 +63,73 @@
 }
 .chatLink:hover {
   transform: scale(1.05);
+}
+.createGroup{
+  text-decoration: none;
+  color: whitesmoke;
+  text-align: center;
+  line-height: 2.5rem;
+  cursor: default;
+  background-color: var(--tertiary);
+  border-radius: 0.5rem;
+  border: none;
+  padding: 0 1.5rem;
+  margin: 0.75rem;
+  transition: transform 0.25s;
+  cursor: pointer;
+}
+.createGroup:hover {
+  transform: scale(1.05);
+}
+
+.form{
+  display: flex;
+  flex-direction: column;
+  background-color: var(--secondary);
+  border-radius: 10px;
+  padding: 1rem;
+  padding-top: 0;
+}
+.formItem{
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.formItem label{
+  margin: 0.5rem;
+  font-size: 1.5rem;
+}
+.formItem input{
+  margin: 0.5rem;
+  width: 100%;
+  height: 2rem;
+  font-size: 1rem;
+}
+.formSubmit {
+  margin: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary);
+  color: white;
+  transition: transform 0.25s;
+  cursor: pointer;
+}
+.formSubmit:hover{
+  transform: scale(1.05);
+}
+
+.formItem input[type="file"] {
+  margin: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary);
+  color: white;
+  transition: transform 0.25s;
+  cursor: pointer;
 }
