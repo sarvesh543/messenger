@@ -1,7 +1,8 @@
 import { MongoClient, ObjectId } from "mongodb";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { Message } from "../typings";
+import cookie from "cookie"
+import clientPromise from "./mongodb";
 
 async function getSessionFromSessionToken(
   sessionToken: string,
@@ -82,9 +83,55 @@ async function addMessageToChat(
   return result;
 }
 
+async function setUserForSocket(
+  socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+) {
+  // setting user properties
+  // getting user from session
+  const mongo = await clientPromise;
+  const cookies = cookie.parse(socket.request.headers.cookie || "");
+  
+  let sessionToken = cookies["next-auth.session-token"];
+  if (!sessionToken) {
+    sessionToken = cookies["__Secure-next-auth.session-token"];
+  }
+  const session = await getSessionFromSessionToken(sessionToken, mongo);
+
+  if (session === null || session.expires < new Date()) {
+    // session does not exist or has expired
+    console.log("sessionToken => ", sessionToken);
+    console.log("session => ", session);
+    socket.disconnect(true);
+    return;
+  }
+  const user = await getUserFromSession(session, mongo);
+  // connected with authenticated user
+  // add this to active clients
+  if (global.connections[user!._id.toString()]) {
+    console.log("Disconnecting old connection...");
+    global.connections[user!._id.toString()].disconnect(true);
+  }
+  global.connections[user!._id.toString()] = socket;
+  io.emit("online-users", Object.keys(global.connections).length);
+  // setting user properties on socket of that user
+  socket.data.user = {
+    name: user?.name,
+    email: user?.email,
+    id: user?._id.toString(),
+  };
+
+  user!.chatIds.forEach((chat: any) => {
+    const chatId = chat.chatId;
+    socket.join(chatId.toString());
+    console.log(socket.data.user.id, " ==joining== ", chatId.toString());
+  });
+}
+
 export {
   setMongoWatch,
   addMessageToChat,
   getSessionFromSessionToken,
   getUserFromSession,
+  setUserForSocket
 };

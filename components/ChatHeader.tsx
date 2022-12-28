@@ -5,8 +5,6 @@ import React from "react";
 import styles from "../styles/ChatHeader.module.css";
 
 function ChatHeader({ chat }: any) {
-  // get notifications from database
-  console.log(chat);
 
   return (
     <header className={styles.container}>

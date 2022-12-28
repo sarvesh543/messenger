@@ -37,6 +37,22 @@ export const authOptions = {
     }),
   ],
   session: { maxAge: 60 * 60 * 24 }, // 1 day,
+  events: {
+    createUser: async ({ user }: any) => {
+      const mongo = await clientPromise;
+      await mongo
+        .db()
+        .collection("chats")
+        .updateOne(
+          { _id: new ObjectId(process.env.GLOBAL_CHAT_ID!) },
+          {
+            $push: {
+              users: new ObjectId(user.id),
+            },
+          }
+        );
+    },
+  },
   callbacks: {
     session: async ({ session, user }: { session: any; user: any }) => {
       // console.log("here i am knskn => ",session, user)

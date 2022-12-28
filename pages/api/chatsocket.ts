@@ -7,6 +7,7 @@ import {
   getSessionFromSessionToken,
   getUserFromSession,
   setMongoWatch,
+  setUserForSocket,
 } from "../../lib/chatSocketFunctions";
 import { Message } from "../../typings";
 import { ObjectId } from "mongodb";
@@ -30,45 +31,13 @@ export default async function handler(req: any, res: any) {
 
     // socket connection and listening for client events
     io.on("connection", async (socket) => {
-      // setting user properties
-      // getting user from session
-      const cookies = cookie.parse(socket.request.headers.cookie || "");
-      let sessionToken = cookies["next-auth.session-token"];
-      if (!sessionToken) {
-        sessionToken = cookies["__Secure-next-auth.session-token"];
-      }
-      const session = await getSessionFromSessionToken(sessionToken, mongo);
-
-      if (session === null || session.expires < new Date()) {
-        // session does not exist or has expired
-        console.log("sessionToken => ", sessionToken);
-        console.log("session => ", session);
-        socket.disconnect(true);
-        return;
-      }
-      const user = await getUserFromSession(session, mongo);
-      // connected with authenticated user
-      // add this to active clients
-      if (global.connections[user!._id.toString()]) {
-        console.log("Disconnecting old connection...");
-        global.connections[user!._id.toString()].disconnect(true);
-      }
-      global.connections[user!._id.toString()] = socket;
-      io.emit("online-users", Object.keys(global.connections).length);
-      // setting user properties on socket of that user
-      socket.data.user = {
-        name: user?.name,
-        email: user?.email,
-        id: user?._id.toString(),
-        timeout: new Date().valueOf(),
-      };
-      user!.chatIds.forEach((chat: any) => {
-        const chatId = chat.chatId;
-        socket.join(chatId.toString());
-        console.log(socket.data.user.id, " ==joining== ", chatId.toString());
-      });
-
-      // console.log(socket.data.user.email);
+      // setting user properties and joining rooms
+      await setUserForSocket(socket, io);
+      
+      // update user rooms 
+      socket.on("update-rooms", async (data:any)=>{
+        await setUserForSocket(socket, io);
+      })
 
       // update online users on connect and disconnect events
       socket.on("disconnect", () => {

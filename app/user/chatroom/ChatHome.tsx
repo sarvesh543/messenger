@@ -4,18 +4,33 @@ import styles from "../../../styles/ChatHome.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import Modal from "../../../components/Modal";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useSocket } from "../../../providers/SocketProvider";
 
 function ChatHome() {
   const { data: session }: any = useSession();
   const [modalOpen, setModalOpen] = useState(false);
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    const reloadSession = () => {
+      const event = new Event("visibilitychange");
+      document.dispatchEvent(event);
+    };
+    reloadSession();
+  }, []);
+
+  useEffect(() => {
+    console.log("refetch");
+    socket?.emit("update rooms");
+  }, [socket, session]);
 
   const handleGroupSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const groupName = e.currentTarget.groupName.value;
     const groupImage = e.currentTarget.groupImage.files[0];
     // TODO: create group api call and figure how to handle and store images
-    
+
     // console.log(groupName, groupImage);
   };
 
@@ -25,8 +40,17 @@ function ChatHome() {
     <>
       <div className={styles.container}>
         <h1 className={styles.title}>ChatHome</h1>
-        <button className={styles.createGroup} onClick={()=>setModalOpen(true)}>Create Group</button>
-        <Modal modalOpen={modalOpen} setModalOpen={setModalOpen} title="Create Group">
+        <button
+          className={styles.createGroup}
+          onClick={() => setModalOpen(true)}
+        >
+          Create Group
+        </button>
+        <Modal
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+          title="Create Group"
+        >
           {/* create form to create new group */}
           <form className={styles.form} onSubmit={handleGroupSubmit}>
             <div className={styles.formItem}>
@@ -37,7 +61,7 @@ function ChatHome() {
               <label htmlFor="groupImage">Group Image</label>
               <input type="file" name="groupImage" id="groupImage" />
             </div>
-           
+
             <button type="submit" className={styles.formSubmit}>
               Submit
             </button>
