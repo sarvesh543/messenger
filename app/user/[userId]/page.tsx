@@ -1,8 +1,10 @@
 import { ObjectId } from "mongodb";
+import { unstable_getServerSession } from "next-auth";
 import Image from "next/image";
 import React from "react";
 import Header from "../../../components/Header";
 import clientPromise from "../../../lib/mongodb";
+import { authOptions } from "../../../pages/api/auth/[...nextauth]";
 import styles from "../../../styles//UserProfile.module.css";
 import MessageButton from "./MessageButton";
 
@@ -16,6 +18,19 @@ async function UserDetails({ params: { userId } }: any) {
       { _id: new ObjectId(userId) },
       { projection: { name: 1, about: 1, image: 1 } }
     );
+    const session:any = await unstable_getServerSession(authOptions);
+    const isFriendDoc = await mongo
+    .db()
+    .collection("chats")
+    .findOne(
+      { 
+        type:0,
+        users: { 
+          $all: [new ObjectId(session?.user?.id), user?._id] 
+        }
+       },
+    )
+    const isFriend = isFriendDoc ? true : false;
 
   // TODO: redirect to error page if user not found
   // TODO: redirect to custom chat on message button click
@@ -37,7 +52,7 @@ async function UserDetails({ params: { userId } }: any) {
             {user.about ? user.about : "No description provided"}
           </p>
           <MessageButton
-            className={styles.btn}
+          isFriend={isFriend}
             friendId={user._id.toString()}
           />
         </main>

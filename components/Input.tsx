@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { useSocket } from "../providers/SocketProvider";
 import styles from "../styles/Input.module.css";
 import { Message } from "../typings";
 
@@ -36,7 +35,7 @@ function Input({
       chatId: chatId,
     };
     
-    fetch("/api/user/sendMessage",{method:"POST",body:JSON.stringify(data)})
+    fetch("/api/user/messages/sendMessage",{method:"POST",body:JSON.stringify(data)})
 
   };
   return (

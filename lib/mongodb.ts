@@ -40,6 +40,7 @@ async function createGlobalChat(clientPromise: Promise<MongoClient>) {
     .db()
     .collection("chats")
     .findOne({ _id: new ObjectId(process.env.GLOBAL_CHAT_ID) });
+  // console.log("result => ", result);
   if (!result) {
     await mongo
       .db()

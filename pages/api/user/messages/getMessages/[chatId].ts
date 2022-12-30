@@ -1,8 +1,8 @@
 // get user messages from mongodb
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
-import clientPromise from "../../../../lib/mongodb";
-import { authOptions } from "../../auth/[...nextauth]";
+import clientPromise from "../../../../../lib/mongodb";
+import { authOptions } from "../../../auth/[...nextauth]";
 import { ObjectId } from "mongodb";
 
 type Data = any;

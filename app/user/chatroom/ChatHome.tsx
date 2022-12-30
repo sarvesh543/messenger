@@ -10,28 +10,45 @@ import { useSocket } from "../../../providers/SocketProvider";
 function ChatHome() {
   const { data: session }: any = useSession();
   const [modalOpen, setModalOpen] = useState(false);
+  const [error, setError] = useState(undefined);
+    const [timeoutId, setTimeoutId] = useState<any>(0);
+
   const { socket } = useSocket();
 
+  const reloadSession = () => {
+    const event = new Event("visibilitychange");
+    document.dispatchEvent(event);
+  };
   useEffect(() => {
-    const reloadSession = () => {
-      const event = new Event("visibilitychange");
-      document.dispatchEvent(event);
-    };
     reloadSession();
   }, []);
 
   useEffect(() => {
-    console.log("refetch");
-    socket?.emit("update rooms");
+    console.log("updating rooms");
+    socket?.emit("update-rooms");
   }, [socket, session]);
 
-  const handleGroupSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleGroupSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const groupName = e.currentTarget.groupName.value;
-    const groupImage = e.currentTarget.groupImage.files[0];
-    // TODO: create group api call and figure how to handle and store images
+    console.log("submitting");
+    const chatName = e.currentTarget.chatName.value;
+    // const groupImage = e.currentTarget.groupImage.files[0];
+    // TODO: add image support
 
-    // console.log(groupName, groupImage);
+    const response = await fetch("/api/user/groups/createGroup", {
+      method: "POST",
+      body: JSON.stringify({ chatName }),
+    });
+    const data = await response.json();
+
+    clearTimeout(timeoutId);
+    setError(data.message);
+    const temp = setTimeout(() => setError(undefined), 3000);
+    setTimeoutId(temp);
+
+
+    reloadSession();
+
   };
 
   if (!session) return <div>Not logged in</div>;
@@ -39,7 +56,7 @@ function ChatHome() {
   return (
     <>
       <div className={styles.container}>
-        <h1 className={styles.title}>ChatHome</h1>
+        <h1 className={styles.title}>All Chats</h1>
         <button
           className={styles.createGroup}
           onClick={() => setModalOpen(true)}
@@ -54,17 +71,14 @@ function ChatHome() {
           {/* create form to create new group */}
           <form className={styles.form} onSubmit={handleGroupSubmit}>
             <div className={styles.formItem}>
-              <label htmlFor="groupName">Group Name</label>
-              <input type="text" name="groupName" id="groupName" />
-            </div>
-            <div className={styles.formItem}>
-              <label htmlFor="groupImage">Group Image</label>
-              <input type="file" name="groupImage" id="groupImage" />
+              <label htmlFor="chatName">Group Name</label>
+              <input type="text" name="chatName" id="chatName" />
             </div>
 
             <button type="submit" className={styles.formSubmit}>
               Submit
             </button>
+            <p className={styles.resMessage}>{error && error}</p>
           </form>
         </Modal>
         <div className={styles.chatContainer}>

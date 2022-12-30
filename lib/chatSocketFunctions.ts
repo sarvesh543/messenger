@@ -1,7 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb";
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import cookie from "cookie"
+import cookie from "cookie";
 import clientPromise from "./mongodb";
 
 async function getSessionFromSessionToken(
@@ -38,11 +38,12 @@ async function setMongoWatch(
 
       if (!messages) return;
       const chatId = data.fullDocument._id.toString();
-      console.log("emitting   =>   ", chatId);
-      io.to(chatId).emit(
-        `chat-${chatId}`,
-        messages[`messages.${data.fullDocument.messages.length - 1}`]
-      );
+      const updatedMessages =
+        messages[`messages.${data.fullDocument.messages.length - 1}`];
+      if (!updatedMessages) return;
+
+      // console.log("emitting   =>   ", chatId);
+      io.to(chatId).emit(`chat-${chatId}`, updatedMessages);
     }
   });
 
@@ -55,7 +56,9 @@ async function setMongoWatch(
     if (data.operationType === "update") {
       if (!data.fullDocument) return;
       const notifications = data.fullDocument.notifications;
+
       const socket = global.connections[data.fullDocument._id.toString()];
+      if (!socket) return;
       io.to(socket.id).emit("notifications", notifications);
     }
   });
@@ -85,13 +88,14 @@ async function addMessageToChat(
 
 async function setUserForSocket(
   socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
-  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+  io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+  firstTime: boolean
 ) {
   // setting user properties
   // getting user from session
   const mongo = await clientPromise;
   const cookies = cookie.parse(socket.request.headers.cookie || "");
-  
+
   let sessionToken = cookies["next-auth.session-token"];
   if (!sessionToken) {
     sessionToken = cookies["__Secure-next-auth.session-token"];
@@ -108,11 +112,13 @@ async function setUserForSocket(
   const user = await getUserFromSession(session, mongo);
   // connected with authenticated user
   // add this to active clients
-  if (global.connections[user!._id.toString()]) {
-    console.log("Disconnecting old connection...");
-    global.connections[user!._id.toString()].disconnect(true);
+  if (firstTime) {
+    if (global.connections[user!._id.toString()]) {
+      console.log("Disconnecting old connection...");
+      global.connections[user!._id.toString()].disconnect(true);
+    }
+    global.connections[user!._id.toString()] = socket;
   }
-  global.connections[user!._id.toString()] = socket;
   io.emit("online-users", Object.keys(global.connections).length);
   // setting user properties on socket of that user
   socket.data.user = {
@@ -124,7 +130,7 @@ async function setUserForSocket(
   user!.chatIds.forEach((chat: any) => {
     const chatId = chat.chatId;
     socket.join(chatId.toString());
-    console.log(socket.data.user.id, " ==joining== ", chatId.toString());
+    // console.log(socket.data.user.id, " ==joining== ", chatId.toString());
   });
 }
 
@@ -133,5 +139,5 @@ export {
   addMessageToChat,
   getSessionFromSessionToken,
   getUserFromSession,
-  setUserForSocket
+  setUserForSocket,
 };

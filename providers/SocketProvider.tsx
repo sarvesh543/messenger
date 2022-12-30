@@ -51,9 +51,7 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
       });
     };
   }, []);
-  useEffect(() => {
-    console.log("socket changed => ", socket);
-  },[socket])
+  
  
   return (
     <SocketContext.Provider value={{ socket: socket, status: status }}>

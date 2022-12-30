@@ -1,11 +1,11 @@
 // get user messages from mongodb
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
-import clientPromise from "../../../lib/mongodb";
-import { authOptions } from "../auth/[...nextauth]";
+import clientPromise from "../../../../lib/mongodb";
+import { authOptions } from "../../auth/[...nextauth]";
 import { ObjectId } from "mongodb";
-import { Message } from "../../../typings";
-import { addMessageToChat } from "../../../lib/chatSocketFunctions";
+import { Message } from "../../../../typings";
+import { addMessageToChat } from "../../../../lib/chatSocketFunctions";
 
 type Data = any;
 

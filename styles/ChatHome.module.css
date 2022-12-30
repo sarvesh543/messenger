@@ -133,3 +133,6 @@
   transition: transform 0.25s;
   cursor: pointer;
 }
+.resMessage{
+  margin: 0 0.5rem;
+}

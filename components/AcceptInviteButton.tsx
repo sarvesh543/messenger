@@ -11,13 +11,17 @@ function AcceptInviteButton({
   link: string;
   text: string;
 }) {
+  const reloadSession = () => {
+    const event = new Event("visibilitychange");
+    document.dispatchEvent(event);
+  };
   const handleClick = async () => {
     try {
-      console.log("button clicked");
       const res = await fetch(link, {
         method: "POST",
         body: JSON.stringify({ notificationId }),
       });
+      reloadSession();
     } catch (err) {
       console.log(err);
     }

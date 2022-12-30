@@ -34,6 +34,7 @@ function ChatRoom({ chatId }: any) {
     setOnlineUsers(data);
   });
   useSubscribe(`chat-${chatId}`, (data) => {
+    // console.log("message => ",data);
     const msg: Message = data;
     addMsg(msg);
     fetchMessages();
@@ -50,13 +51,13 @@ function ChatRoom({ chatId }: any) {
   };
   const fetchMessages = async () => {
     try {
-      console.log("fetching messages");
-      const result = await fetch(`/api/user/getMessages/${chatId}`).then(
+      // console.log("fetching messages");
+      const result = await fetch(`/api/user/messages/getMessages/${chatId}`).then(
         (res) => res.json()
       );
       if (!Array.isArray(result)) throw new Error("messages not fetched");
       setMessages(result);
-      console.log("messages fetched");
+      // console.log("messages fetched");
     } catch (err) {
       console.log("error fetching messages");
       // signOut({ callbackUrl: `${window.location.origin}/auth/signin` });

@@ -50,8 +50,12 @@
     transition: all 0.25s;
     width:fit-content;
     font-size: medium;
+    cursor:not-allowed;
 }
-.btn:hover{
+.addFriend{
+    background-color: var(--primary);
+}
+.addFriend:hover{
     cursor:pointer;
     line-height: 3rem;
     height: 3rem;
@@ -60,4 +64,8 @@
 }
 .btn img{
     margin-left:0.25rem;
+}
+.errorMessage{
+    margin: 0 3rem;
+    font-size: small;
 }

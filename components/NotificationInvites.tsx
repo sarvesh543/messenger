@@ -14,6 +14,9 @@ type Props = {
 function NotificationInvites({ notifications: defaultNot }: Props) {
   const [notifications, setNotifications] =
     useState<NotificaionType[]>(defaultNot);
+
+  // fetch notificqtions from fetch api call on rerender instead of defaultNot
+
   useSubscribe("notifications", (data) => {
     setNotifications(data);
     console.log("received notifications");
@@ -44,13 +47,13 @@ function NotificationInvites({ notifications: defaultNot }: Props) {
                     {/* implement button logic */}
                     <div className={styles.notButtonContainer}>
                       <AcceptInviteButton
-                        link={"/api/user/acceptInvite"}
+                        link={"/api/user/notifications/acceptInvite"}
                         className={styles.notButton}
                         notificationId={notification._id.toString()}
                         text="Accept"
                       />
                       <AcceptInviteButton
-                        link={"/api/user/rejectInvite"}
+                        link={"/api/user/notifications/rejectInvite"}
                         className={`${styles.notButton} ${styles.notButtonDecline}`}
                         notificationId={notification._id.toString()}
                         text="Reject"

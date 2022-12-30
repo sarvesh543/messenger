@@ -4,7 +4,7 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: { appDir: true, allowMiddlewareResponseBody: true },
   images: {
-    domains: ["lh3.googleusercontent.com"],
+    domains: ["lh3.googleusercontent.com", "ui-avatars.com"],
   },
   typescript: {
     // !! WARN !!

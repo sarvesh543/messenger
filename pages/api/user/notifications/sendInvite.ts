@@ -1,8 +1,8 @@
 // get user messages from mongodb
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unstable_getServerSession } from "next-auth";
-import clientPromise from "../../../lib/mongodb";
-import { authOptions } from "../auth/[...nextauth]";
+import clientPromise from "../../../../lib/mongodb";
+import { authOptions } from "../../auth/[...nextauth]";
 import { ObjectId } from "mongodb";
 
 type Data = any;
@@ -12,19 +12,19 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   if (req.method !== "POST")
-    return res.status(405).json({ error: "Method Not Allowed" });
+    return res.status(405).json({ message: "Method Not Allowed" });
 
   try {
     const session = await unstable_getServerSession(req, res, authOptions);
     if (!session) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     const friendId = JSON.parse(req.body).friendId.toString();
 
     if (friendId === session.user.id)
-      return res.status(400).json({ error: "You can't invite yourself" });
+      return res.status(400).json({ message: "You can't invite yourself" });
     if (!friendId)
-      return res.status(400).json({ error: "Friend id is required" });
+      return res.status(400).json({ message: "Friend id is required" });
     // TODO: handle invites from group later
 
     const mongo = await clientPromise;
@@ -44,7 +44,7 @@ export default async function handler(
         type: 0,
         users: { $all: [new ObjectId(session.user.id), new ObjectId(friendId)] },
       });
-    if (friends) return res.status(400).json({ error: "Already chatting" });
+    if (friends) return res.status(400).json({ message: "Already Friends" });
     // exists in notifications
     const existsWithFriend = await mongo
       .db()
@@ -58,7 +58,7 @@ export default async function handler(
         },
       });
     if (existsWithFriend)
-      return res.status(400).json({ error: "Invite already sent" });
+      return res.status(400).json({ message: "Invite already sent" });
     const friendSentInvite = await mongo
       .db()
       .collection("users")
@@ -71,7 +71,7 @@ export default async function handler(
         },
       });
     if (friendSentInvite)
-      return res.status(400).json({ error: "Pending invite from friend" });
+      return res.status(400).json({ message: "Pending invite from friend" });
 
     await mongo
       .db()
@@ -83,6 +83,6 @@ export default async function handler(
     return res.status(200).json({ message: "Invite sent" });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Invite could not be sent" });
+    return res.status(500).json({ message: "Invite could not be sent" });
   }
 }

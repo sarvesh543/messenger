@@ -27,6 +27,10 @@ function ChatHeader({ chat }: any) {
         </Link>
         <h2 className={styles.title}>{chat.chatName}</h2>
       </div>
+      {/* 
+      provide delete group function in context menu
+      for group chats where user is admin
+      */}
       <div className={styles.right}>Context menu here</div>
     </header>
   );

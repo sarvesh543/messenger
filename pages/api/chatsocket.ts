@@ -32,11 +32,11 @@ export default async function handler(req: any, res: any) {
     // socket connection and listening for client events
     io.on("connection", async (socket) => {
       // setting user properties and joining rooms
-      await setUserForSocket(socket, io);
+      await setUserForSocket(socket, io, true);
       
       // update user rooms 
       socket.on("update-rooms", async (data:any)=>{
-        await setUserForSocket(socket, io);
+        await setUserForSocket(socket, io, false);
       })
 
       // update online users on connect and disconnect events
