@@ -16,9 +16,20 @@
   flex-direction: column;
   margin: 0px;
   overflow-y: scroll;
-  max-height: calc(100vh - 250px);
+  /* max-height: calc(100vh - 250px); */
+  max-height: 300px;
   width: 100%;
   padding: 0px 10px;
+}
+.chatContainer::-webkit-scrollbar {
+  width: 7px;
+}
+.chatContainer::-webkit-scrollbar-track {
+  background: rgb(226, 255, 226);
+}
+.chatContainer::-webkit-scrollbar-thumb {
+  background: linear-gradient(#2b29f9, #03f7f7);
+  border-radius: 100vw;
 }
 .chatImage {
   border-radius: 100%;

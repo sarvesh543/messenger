@@ -65,7 +65,6 @@ function ChatRoom({ chatId }: any) {
   };
 
   useEffect(() => {
-    console.log("running useEffect");
     fetchMessages();
   }, []);
 

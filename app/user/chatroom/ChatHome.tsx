@@ -30,7 +30,7 @@ function ChatHome() {
 
   const handleGroupSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submitting");
+    
     const chatName = e.currentTarget.chatName.value;
     // const groupImage = e.currentTarget.groupImage.files[0];
     // TODO: add image support
@@ -55,6 +55,8 @@ function ChatHome() {
   const chats = session.user?.chatIds;
   return (
     <>
+        <div style={{ overflowY: "scroll", height: "calc(100vh - 70px)" }}>
+
       <div className={styles.container}>
         <h1 className={styles.title}>All Chats</h1>
         <button
@@ -107,6 +109,7 @@ function ChatHome() {
             );
           })}
         </div>
+      </div>
       </div>
     </>
   );

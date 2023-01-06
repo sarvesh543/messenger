@@ -1,9 +1,23 @@
 # Chat messaging website built with next js 13
 live build: https://messengerlocation-production.up.railway.app/
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Important
+
+To use search functionaity, create a autocomplete search index for users collection (field: name) in mongo atlas
+
+## env file in root directory
+```
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=some secret key
+MONGODB_URI=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+NODE_ENV=development
+GLOBAL_CHAT_ID=alpha numeric id of global chat
+```
 
 ## Getting Started
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 First, run the development server:
 

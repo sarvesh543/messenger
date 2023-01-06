@@ -43,7 +43,7 @@ async function Header() {
             height={100}
           />
         </Link>
-        <h1 className={styles.title}>MessLoc</h1>
+        <h1 className={styles.title}>Messenger</h1>
       </div>
       <div className={styles.right}>
         <AuthButton session={session} />

@@ -4,6 +4,7 @@ import { unstable_getServerSession } from "next-auth/next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
 import Link from "next/link";
 import Header from "../components/Header";
+import SearchUsers from "./SearchUsers";
 
 export default async function Home() {
   const session = await unstable_getServerSession(authOptions);
@@ -15,7 +16,6 @@ export default async function Home() {
         <Header />
         <div style={{ overflowY: "scroll", height: "calc(100vh - 70px)" }}>
           <main className={styles.main}>
-            <h1>Change style of this page later</h1>
             <Image
               className={styles.profile}
               src={session.user?.image!}
@@ -33,6 +33,7 @@ export default async function Home() {
             <Link href="/user/chatroom" className={styles.btn}>
               Go To ChatRoom
             </Link>
+            <SearchUsers />
           </main>
         </div>
       </>
@@ -41,10 +42,12 @@ export default async function Home() {
     return (
       <>
         <Header />
-        <main className={styles.main}>
-          <h1>Welcome to MessLoc</h1>
-          <p>Details will be updated here...</p>
-        </main>
+        <div style={{ overflowY: "scroll", height: "calc(100vh - 70px)" }}>
+          <main className={styles.main}>
+            <h1>Welcome to Messenger</h1>
+            <SearchUsers />
+          </main>
+        </div>
       </>
     );
   }

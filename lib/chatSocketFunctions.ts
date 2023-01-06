@@ -104,8 +104,6 @@ async function setUserForSocket(
 
   if (session === null || session.expires < new Date()) {
     // session does not exist or has expired
-    console.log("sessionToken => ", sessionToken);
-    console.log("session => ", session);
     socket.disconnect(true);
     return;
   }
