@@ -1,7 +1,12 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styles from "../styles/Home.module.css";
 import "../styles/loadings.css";
 
@@ -92,26 +97,28 @@ const useSearch = (search: string) => {
 };
 
 function SearchUsers() {
-    const router = useRouter();
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const { setPage, loading, searchResults } = useSearch(search);
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
   // navigate to user profile
-    const handleUserClick = (id: string) => {
-        router.push(`/user/${id}`);
-    }
+  const handleUserClick = (id: string) => {
+    router.push(`/user/${id}`);
+  };
 
   //   intersection
   const lastRef = useRef(null);
-  const observer = useMemo(() => new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      setPage((prev) => prev + 1);
-      // console.log("last element reached");
-    }
-  }), [setPage]);
+
   useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setPage((prev) => prev + 1);
+        // console.log("last element reached");
+      }
+    });
+
     const currentRef = lastRef.current;
     if (currentRef) {
       observer.observe(currentRef);
@@ -131,54 +138,54 @@ function SearchUsers() {
         className={styles.searchInput}
         placeholder="Search for users..."
       />
-              <div className={styles.searchResults}>
-
-      {searchResults.length === 0 && loading && (
-        // <div className="loaderContainer" style={{margin:"98px"}}>
-          <div className="loader" style={{margin:"auto"}}></div>
-        // </div>
-      )}
-      {searchResults.length === 0 && !loading && <h1 style={{margin:"auto"}}>No Matches</h1>}
-      {searchResults.length !== 0 && (
-            <>
+      <div className={styles.searchResults}>
+        {searchResults.length === 0 && loading && (
+          // <div className="loaderContainer" style={{margin:"98px"}}>
+          <div className="loader" style={{ margin: "auto" }}></div>
+          // </div>
+        )}
+        {searchResults.length === 0 && !loading && (
+          <h1 style={{ margin: "auto" }}>No Matches</h1>
+        )}
+        {searchResults.length !== 0 && (
+          <>
             {searchResults.map((user: any, index) => {
-            return (
-              <div
-                key={user._id}
-                ref={index === searchResults.length - 1 ? lastRef : null}
-                className={styles.userItem}
-            
-                onClick={() => handleUserClick(user._id)}
-              >
-                <div className={styles.userImageAndName}>
-                  <Image
-                    className={styles.userImage}
-                    src={user.image}
-                    alt="chat image"
-                    width={32}
-                    height={32}
-                  />
+              return (
+                <div
+                  key={user._id}
+                  ref={index === searchResults.length - 1 ? lastRef : null}
+                  className={styles.userItem}
+                  onClick={() => handleUserClick(user._id)}
+                >
+                  <div className={styles.userImageAndName}>
+                    <Image
+                      className={styles.userImage}
+                      src={user.image}
+                      alt="chat image"
+                      width={32}
+                      height={32}
+                    />
 
-                  <h2 className={styles.userName}>{user.name}</h2>
+                    <h2 className={styles.userName}>{user.name}</h2>
+                  </div>
                 </div>
+              );
+            })}
+            {loading && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "15px",
+                }}
+              >
+                <div className={`loader ${styles.spinner}`}></div>
               </div>
-            );
-          })}
-          {loading && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "15px",
-              }}
-            >
-              <div className={`loader ${styles.spinner}`}></div>
-            </div>
-          )}
-        </>
-      )}
-    </div>
+            )}
+          </>
+        )}
+      </div>
     </>
   );
 }

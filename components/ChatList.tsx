@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Message } from "../typings";
 import styles from "../styles/ChatRoom.module.css";
 import Loading from "../app/user/chatroom/[chatId]/loading";
@@ -18,21 +18,16 @@ function ChatList({
   const lastElementRef = useRef<HTMLDivElement>(null);
   const [isIntersecting, setIsIntersecting] = useState(false);
 
-  const observer = useMemo(
-    () =>
-      new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          setIsIntersecting(true);
-          // console.log("last element reached");
-        }else{
-          setIsIntersecting(false);
-        }
-      }),
-    [setIsIntersecting]
-  );
-
   useEffect(() => {
-    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setIsIntersecting(true);
+        // console.log("last element reached");
+      } else {
+        setIsIntersecting(false);
+      }
+    });
+
     const currentRef = lastElementRef.current;
     if (currentRef) {
       observer.observe(currentRef);
