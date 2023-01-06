@@ -34,7 +34,7 @@ export default async function handler(
               path: "name",
               fuzzy: {
                 maxEdits: 2,
-                prefixLength: 3,
+                prefixLength: 1,
               },
             },
           },
