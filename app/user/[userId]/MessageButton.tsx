@@ -20,12 +20,13 @@ function MessageButton({
         method: "POST",
         body: JSON.stringify({ friendId }),
       });
-      if(res.statusText === "Unauthorized"){
+      
+      const data = await res.json();
+      
+      if(data.message === "Unauthorized"){
         router.push("/auth/signin");
       }
-
-      const data = await res.json();
-
+      
       clearTimeout(timeoutId);
       setError(data.message);
       const temp = setTimeout(() => setError(undefined), 3000);

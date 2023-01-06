@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import styles from "../styles/Home.module.css";
 import "../styles/loadings.css";
 
@@ -105,13 +105,13 @@ function SearchUsers() {
 
   //   intersection
   const lastRef = useRef(null);
+  const observer = useMemo(() => new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      setPage((prev) => prev + 1);
+      // console.log("last element reached");
+    }
+  }), [setPage]);
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setPage((prev) => prev + 1);
-        // console.log("last element reached");
-      }
-    });
     const currentRef = lastRef.current;
     if (currentRef) {
       observer.observe(currentRef);
@@ -131,15 +131,17 @@ function SearchUsers() {
         className={styles.searchInput}
         placeholder="Search for users..."
       />
+              <div className={styles.searchResults}>
+
       {searchResults.length === 0 && loading && (
-        <div className="loaderContainer">
-          <div className="loader"></div>
-        </div>
+        // <div className="loaderContainer" style={{margin:"98px"}}>
+          <div className="loader" style={{margin:"auto"}}></div>
+        // </div>
       )}
-      {searchResults.length === 0 && !loading && <h1>No Matches</h1>}
+      {searchResults.length === 0 && !loading && <h1 style={{margin:"auto"}}>No Matches</h1>}
       {searchResults.length !== 0 && (
-        <div className={styles.searchResults}>
-          {searchResults.map((user: any, index) => {
+            <>
+            {searchResults.map((user: any, index) => {
             return (
               <div
                 key={user._id}
@@ -174,8 +176,9 @@ function SearchUsers() {
               <div className={`loader ${styles.spinner}`}></div>
             </div>
           )}
-        </div>
+        </>
       )}
+    </div>
     </>
   );
 }

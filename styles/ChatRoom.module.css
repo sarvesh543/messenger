@@ -22,6 +22,11 @@
   background: linear-gradient(#2b29f9, #03f7f7);
   border-radius: 100vw;
 }
+.lastElement{
+  position: absolute;
+  z-index: -50;
+  min-height: 100px;
+}
 .online {
   position: fixed;
   z-index: 50;
