@@ -24,7 +24,6 @@ function ChatHome() {
   }, []);
 
   useEffect(() => {
-    console.log("updating rooms");
     socket?.emit("update-rooms");
   }, [socket, session]);
 

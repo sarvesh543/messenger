@@ -65,6 +65,7 @@ export default async function handler(
             chatIds: {
               chatId: chat.insertedId,
               chatName: chatName,
+              isAdmin: true,
               image: `https://ui-avatars.com/api/?s=32&name=${chatName.split(' ').join('+')}`,
             },
           },

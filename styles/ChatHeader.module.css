@@ -50,3 +50,14 @@
   flex-direction: row;
   align-items: center;
 }
+.addParticipant{
+  fill:white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+}
+.addParticipant:hover{
+  background-color: gray;
+}

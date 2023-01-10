@@ -46,6 +46,7 @@ async function UserDetails({ params: { userId } }: any) {
             alt="profile image"
             width={100}
             height={100}
+            priority
           />
           <h1 className={styles.name}>{user.name}</h1>
           <p className={styles.about}>

@@ -1,26 +1,28 @@
 .container {
   position: absolute;
   background-color: rgba(128, 128, 128, 0.5);
+  color: black;
   width: 100%;
   top: -1rem;
   left: -1rem;
-  z-index: 100;
-  height: 100%;
+  height: 100vh;
   display: none;
   justify-content: center;
   align-items: center;
   padding: 1rem;
+  z-index: 100;
 }
 .modalVisible{
     display: flex
 }
 /* add animation for modal appearing */
 .modal {
-  padding: 15px;
+  padding: 20px;
   background-color: var(--secondary);
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   max-height: 80%;
+  width:fit-content;
   overflow: auto;
 }
 .imgCont{

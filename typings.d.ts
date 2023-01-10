@@ -15,6 +15,9 @@ export type NotificaionType = {
   userImg: string;
   type: number;
   userId: string;
+  groupName?: string;
+  groupId?: string;
+  groupImage?: string;
 };
 
 export type UserProfile = {

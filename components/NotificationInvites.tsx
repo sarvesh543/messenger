@@ -6,6 +6,7 @@ import { useSubscribe } from "../providers/SocketProvider";
 import styles from "../styles/Header.module.css";
 import { NotificaionType } from "../typings";
 import AcceptInviteButton from "./AcceptInviteButton";
+import { BellIcon } from "@heroicons/react/24/solid";
 
 type Props = {
   notifications: NotificaionType[];
@@ -23,13 +24,14 @@ function NotificationInvites({ notifications: defaultNot }: Props) {
   });
   return (
     <>
-      <Image
+      <BellIcon className={styles.notificationIcon} style={{width:"32px", height:"32px"}}/>
+      {/* <Image
         className={styles.notificationIcon}
         src="/notification.png"
         alt="notification icon"
         width={32}
         height={32}
-      />
+      /> */}
       <div className={styles.notificationContainer}>
         <div className={styles.notIn}>
           {notifications.length === 0 && <p>No Notifications Here</p>}
@@ -39,10 +41,23 @@ function NotificationInvites({ notifications: defaultNot }: Props) {
                 <React.Fragment key={notification._id.toString()}>
                   <div className={styles.notMain}>
                     <div className={styles.notLeft}>
-                      <Link href={`/user/${notification.userId}`}>
-                        {notification.user}
-                      </Link>
-                      <p>{notification.message}</p>
+                      {notification.type === 0 && (
+                        <>
+                          <Link href={`/user/${notification.userId}`}>
+                            {notification.user}
+                          </Link>
+                          <p>{notification.message}</p>
+                        </>
+                      )}
+                      {notification.type === 1 && (
+                        <>
+                          <h3>{notification.groupName}</h3>
+                          <p>
+                            {`${notification.message} `}
+                            <Link href={`/user/${notification.userId}`}>{notification.user}</Link>
+                          </p>
+                        </>
+                      )}
                     </div>
                     {/* implement button logic */}
                     <div className={styles.notButtonContainer}>

@@ -41,6 +41,7 @@ async function Header() {
             alt="logo"
             width={100}
             height={100}
+            priority
           />
         </Link>
         <h1 className={styles.title}>Messenger</h1>

@@ -1,13 +1,12 @@
 "use client";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, {
   ChangeEvent,
+  MutableRefObject,
   useEffect,
   useRef,
   useState,
 } from "react";
-import styles from "../styles/Home.module.css";
 import "../styles/loadings.css";
 
 function debounce(func: Function, timeout = 300) {
@@ -62,8 +61,11 @@ const getResults = debounce(
   }
 );
 
-const useSearch = (search: string) => {
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+const useSearch = (
+  search: string,
+  searchResults: any[],
+  setSearchResults: React.Dispatch<React.SetStateAction<any[]>>
+) => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -93,23 +95,27 @@ const useSearch = (search: string) => {
     };
   }, [page, search]);
 
-  return { setPage, loading, searchResults };
+  return { setPage, loading };
 };
 
-function SearchUsers() {
+type Props = {
+  setSearchResults: React.Dispatch<React.SetStateAction<any[]>>;
+  searchResults: any[];
+  children: React.ReactNode;
+  lastRef: MutableRefObject<null>;
+  styles: any
+};
+
+function SearchUsers({searchResults, setSearchResults, children, lastRef, styles}:Props) {
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const { setPage, loading, searchResults } = useSearch(search);
+  const { setPage, loading } = useSearch(search, searchResults, setSearchResults);
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
-  // navigate to user profile
-  const handleUserClick = (id: string) => {
-    router.push(`/user/${id}`);
-  };
 
-  //   intersection
-  const lastRef = useRef(null);
+
+  
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -149,28 +155,7 @@ function SearchUsers() {
         )}
         {searchResults.length !== 0 && (
           <>
-            {searchResults.map((user: any, index) => {
-              return (
-                <div
-                  key={user._id}
-                  ref={index === searchResults.length - 1 ? lastRef : null}
-                  className={styles.userItem}
-                  onClick={() => handleUserClick(user._id)}
-                >
-                  <div className={styles.userImageAndName}>
-                    <Image
-                      className={styles.userImage}
-                      src={user.image}
-                      alt="chat image"
-                      width={32}
-                      height={32}
-                    />
-
-                    <h2 className={styles.userName}>{user.name}</h2>
-                  </div>
-                </div>
-              );
-            })}
+            {children}
             {loading && (
               <div
                 style={{

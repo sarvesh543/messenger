@@ -1,4 +1,5 @@
 "use client";
+import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useState } from "react";
 import styles from "../styles/Input.module.css";
@@ -51,13 +52,10 @@ function Input({
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => (e.key === "Enter" ? handleSubmit() : null)}
         />
-        <Image
+        <PaperAirplaneIcon
           onClick={() => handleSubmit()}
           className={styles.send}
-          src="/send.png"
-          alt="send button"
-          width={100}
-          height={100}
+          style={{ fill: "blue", width: "50px", height: "50px" }}
         />
       </div>
     </footer>

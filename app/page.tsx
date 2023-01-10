@@ -4,7 +4,7 @@ import { unstable_getServerSession } from "next-auth/next";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
 import Link from "next/link";
 import Header from "../components/Header";
-import SearchUsers from "./SearchUsers";
+import SearchUsersHomePage from "./SearchUsersHomePage";
 
 export default async function Home() {
   const session = await unstable_getServerSession(authOptions);
@@ -33,7 +33,7 @@ export default async function Home() {
             <Link href="/user/chatroom" className={styles.btn}>
               Go To ChatRoom
             </Link>
-            <SearchUsers />
+            <SearchUsersHomePage />
           </main>
         </div>
       </>
@@ -45,7 +45,7 @@ export default async function Home() {
         <div style={{ overflowY: "scroll", height: "calc(100vh - 70px)" }}>
           <main className={styles.main}>
             <h1>Welcome to Messenger</h1>
-            <SearchUsers />
+            <SearchUsersHomePage />
           </main>
         </div>
       </>

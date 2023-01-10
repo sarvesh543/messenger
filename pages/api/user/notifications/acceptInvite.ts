@@ -44,7 +44,34 @@ export default async function handler(
       );
     const notification = result?.notifications[0];
     // TODO: add to friends for both users
-    if (notification.type === 0) {
+    if (notification.type === 1) {
+      await mongo
+        .db()
+        .collection("chats")
+        .updateOne(
+          { _id: new ObjectId(notification.groupId) },
+          {
+            $push: {
+              users: new ObjectId(session.user.id),
+            },
+          }
+        );
+        await mongo
+          .db()
+          .collection("users")
+          .updateOne(
+            { _id: new ObjectId(session.user.id) },
+            {
+              $push: {
+                chatIds: {
+                  chatId: notification.groupId,
+                  chatName: notification.groupName,
+                  image: notification.groupImage,
+                },
+              },
+            }
+          );
+    } else if (notification.type === 0) {
       const chatObj = {
         _id: new ObjectId(),
         type: 0,
