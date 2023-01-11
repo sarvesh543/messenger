@@ -17,7 +17,7 @@ function Modal({ children, modalOpen, setModalOpen, title }: Props) {
     >
       <main className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.imgCont}>
-            <h2>{title}</h2>
+          <h2>{title}</h2>
           <Image
             className={styles.image}
             src="/close.png"
@@ -28,6 +28,22 @@ function Modal({ children, modalOpen, setModalOpen, title }: Props) {
           />
         </div>
         {children}
+        <svg
+          className={styles.modalSvg}
+          xmlns="http://www.w3.org/2000/svg"
+          width="100%"
+          height="100%"
+          preserveAspectRatio="none"
+        >
+          <rect
+            x="0"
+            y="0"
+            fill="none"
+            width="100%"
+            height="100%"
+            rx="10"
+          ></rect>
+        </svg>
       </main>
     </div>
   );
