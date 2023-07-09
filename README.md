@@ -1,4 +1,6 @@
 # Chat messaging website built with next js 13
+Live Deploy: https://purple-bay-0d2573f00.3.azurestaticapps.net
+
 ## Important
 
 To use search functionaity, create a autocomplete search index for users collection (field: name) in mongo atlas
