@@ -2,6 +2,7 @@
 const nextConfig = {
   swcMinify: true,
   reactStrictMode: true,
+  output: 'standalone',
   experimental: { appDir: true, allowMiddlewareResponseBody: true },
   images: {
     domains: ["lh3.googleusercontent.com", "ui-avatars.com"],
